@@ -1,0 +1,65 @@
+# ---- R / RStudio / OS ---------------------------------------------------------
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+.Renviron
+Rplots.pdf
+Thumbs.db
+desktop.ini
+
+# ---- Retired code, figures and run logs (kept locally, not published) ---------
+archive/
+logs/
+
+# ---- Cluster state (hipercow roots, bundles, provisioning) --------------------
+hipercow/
+
+# ---- DHS/MIS survey data: RESTRICTED ------------------------------------------
+# The DHS Program does not allow redistribution of its microdata. Anyone
+# re-running the analysis must register with the DHS Program, request access
+# for their own project and enter their own credentials (DHS_EMAIL and
+# DHS_PROJECT in the project .Renviron; see README "Data access").
+# rdhs login configuration and raw-download cache
+rdhs.json
+**/dhs_raw_cache/
+# raw DHS/MIS files, in case any are saved inside the project
+*.DTA
+*.dta
+*.SAV
+*.sav
+*FL.zip
+*FL.ZIP
+# Every pipeline output: DHS/MIS pull and transformations (01_pull_mis_data/,
+# 02_structure_mis_data/), regression fits that embed the individual-level
+# data (03b_brms_int_cluster_fit/), and calibration files built from the
+# survey data and site files (04_grid_simulation/ to 06_hierarchical_fitting/).
+outputs/
+# Knitted reports and caches (launch.R renders results_numbers.Rmd to a
+# temporary folder; these patterns catch a manual knit)
+*.html
+src/results_numbers_cache/
+src/results_numbers_files/
+
+# Manuscript: kept outside this repository (HRP2_MANUSCRIPT_DIR, see README)
+manuscript/
+
+# ---- Site files: RESTRICTED, available on request ------------------------------
+# Site files (SITE_CACHE_DIR, UGA_SNT_SITE_FILE in src/functions/paths.R) and
+# anything cached from them.
+data/site_files/
+*_site.rds
+*_site.RDS
+site.RDS
+**/site_cache/
+**/base_pars_cache*/
+
+# ---- Results: archived on Zenodo, not in git (README "Results and posterior
+# estimates"): numbers.tex, the LOO table and results/posteriors/
+results/
+
+# ---- Tracked on purpose ---------------------------------------------------------
+# src/, data/ (public inputs), figures/ (manuscript figures written by
+# src/plots.R, and figures/static/ for the hand-drawn model framework).
+# The local .Renviron (credentials, paths) is ignored above; .Renviron.example
+# is the template.

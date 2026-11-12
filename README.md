@@ -32,7 +32,9 @@ mal_proj_publication/
 │   └── functions/            function libraries
 ├── data/                     public inputs (tracked); data/site_files/ is restricted (ignored)
 ├── figures/                  code-generated figures; figures/static/ holds the hand-drawn model framework
-├── results/                  numbers.tex, LOO table, posteriors/
+├── results/                  numbers.tex, LOO table, posteriors/ (git-ignored; archived on Zenodo)
+├── outputs/                  all intermediate files (git-ignored)
+└── archive/                  retired code, figures and logs (git-ignored)
 ```
 
 ## Analysis components
@@ -77,9 +79,15 @@ Every script's header states its component on an `ANALYSIS COMPONENT:` line.
 
 When `HRP2_MANUSCRIPT_DIR` points to a local copy of the manuscript, `results/numbers.tex` holds only the keys its `.tex` files cite, and `results_numbers.Rmd` reports any cited key the code does not produce. Without it, `numbers.tex` holds every computed key.
 
-### Posterior estimates
+### Results and posterior estimates (Zenodo)
 
-`src/export_posteriors.R` writes every posterior estimate to `results/posteriors/`:
+The contents of `results/` are not in this repository. They are archived on Zenodo:
+
+> Walters M, et al. Posterior estimates for "Estimating HRP2 antigen persistence and effect on rapid diagnostic test data: a Bayesian hierarchical approach". Zenodo. https://doi.org/10.5281/zenodo.XXXXXXX
+
+To use them without re-running the pipeline, download `results.zip` from the record and unzip it into the project root, so the files sit in `results/`. Re-running steps 2 and 7 writes the same files from your own fits.
+
+`results/` holds `numbers.tex` (every number in the manuscript), `table_loo_fixed_effect_selection.csv` (appendix ELPD table) and `posteriors/`. `src/export_posteriors.R` writes every posterior estimate to `results/posteriors/`:
 
 - `regression/`: every draw and a summary (mean, SD, median, 95% credible interval, R-hat, effective sample size) of each fixed effect, random-effect SD and survey random effect, plus the FPR, FDR and average marginal effects.
 - `calibration/<fit>/`: for the main fit and each sensitivity fit, every pooled draw of mu_P, sigma_P and the population median half-life; thinned joint draws of each region's half-life and EIR; region, country and unobserved-region summaries; convergence diagnostics; priors.
@@ -158,7 +166,8 @@ Step 7 rebuilds everything the manuscript uses from the saved fits, so it can be
 | `src/`, `launch.R`, `run_sections.R`, provisioning files | `outputs/` (all DHS/MIS-derived data, simulations, emulators, fits, MCMC chains) |
 | `data/` public inputs | `data/site_files/` and any `*_site.rds` |
 | `figures/` (code-generated) and `figures/static/` | `.Renviron`, `rdhs.json`, raw DHS files and cache |
-| `results/` (numbers.tex, LOO table, posteriors) | `archive/`, `logs/`, `hipercow/` |
+| | `results/` (archived on Zenodo) |
+| | `archive/`, `logs/`, `hipercow/` |
 | | `manuscript/` (kept outside the repository), knitted HTML |
 
 ## Building the manuscript

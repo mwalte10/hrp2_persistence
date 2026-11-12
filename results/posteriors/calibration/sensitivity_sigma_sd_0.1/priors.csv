@@ -1,9 +1,0 @@
-prior,value
-mu_d_mean,3.07456312168387
-mu_d_sd,0.75
-sigma_d_prior_mean,0.3
-sigma_d_prior_sd,0.1
-eir_mu,3.45387763949107
-eir_sd,1.8582265662759
-decay_family,normal
-decay_t_df,4
