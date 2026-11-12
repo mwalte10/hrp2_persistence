@@ -83,7 +83,7 @@ When `HRP2_MANUSCRIPT_DIR` points to a local copy of the manuscript, `results/nu
 
 The contents of `results/` are not in this repository. They are archived on Zenodo:
 
-> Walters M, et al. Posterior estimates for "Estimating HRP2 antigen persistence and effect on rapid diagnostic test data: a Bayesian hierarchical approach". Zenodo. https://doi.org/10.5281/zenodo.XXXXXXX
+> Walters M, et al. Posterior estimates for "Estimating HRP2 antigen persistence and effect on rapid diagnostic test data: a Bayesian hierarchical approach". Zenodo. https://doi.org/10.5281/zenodo.24166841
 
 To use them without re-running the pipeline, download `results.zip` from the record and unzip it into the project root, so the files sit in `results/`. Re-running steps 2 and 7 writes the same files from your own fits.
 
