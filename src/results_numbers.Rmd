@@ -1,0 +1,1230 @@
+---
+title: "Results section: number plugging"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+params:
+  rdt_sensitivity: 0.9     # which sensitivity variant's MCMC fit to report (0.8, 0.9, 1.0)
+  agg_weights: "par_pf"    # country-level site weights, same as plots.R's AGG_WEIGHTS
+  near_window: 50          # not used in text; kept for consistency with 05 diagnostics
+---
+
+```{r setup, include = FALSE}
+# ANALYSIS COMPONENT: OUTPUTS (every number and generated table in the
+# manuscript and appendix, regression + calibration, main + sensitivity fits)
+# -> results/numbers.tex and results/table_*.tex
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+# This file sits in src/; later chunks run from the project root.
+knitr::opts_knit$set(root.dir = normalizePath(".."))
+```
+
+```{r load, include = FALSE}
+suppressMessages({
+  library(data.table)
+  library(posterior)
+})
+source("./src/functions/paths.R")
+source("./src/functions/hierarchical_mcmc_fns.R")
+source("./src/functions/cluster_fns.R")
+source("./src/functions/plot_mcmc_diagnostics.R")   # simulate_hierarchical_priors()
+source("./src/functions/posterior_summary_fns.R")
+source("./src/functions/brms_int_cluster_fns.R")    # prepare_brms_full_data()
+source("./src/functions/pipeline_fns.R")            # mcmc_variants(), mcmc_variant_dir()
+source("./src/functions/numbers_fns.R")             # num(), num_ci(), write_numbers()
+source("./src/functions/data_stream_fns.R")         # data_stream_counts(), shared with plots.R
+source("./src/functions/tex_table_fns.R")           # shared table format: tex_float_table(), tex_long_table()
+
+SE            <- params$rdt_sensitivity
+GRID_OUT_DIR  <- DIR_GRID
+MCMC_OUT_DIR  <- rdt_sensitivity_dir(DIR_MCMC, SE)
+PPI_DIR       <- file.path(MCMC_OUT_DIR, "posterior_predictive")
+SITE_PREV_DIR <- DIR_STRUCTURE
+REG_DIR       <- DIR_REGRESSION
+OUT_DIR       <- RESULTS_DIR
+dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
+
+# --- formatting ------------------------------------------------------------
+fmt <- function(x, d = 1) formatC(x, format = "f", digits = d, big.mark = ",")
+ci  <- function(m, lo, hi, d = 2) sprintf("%s (%s--%s)", fmt(m, d), fmt(lo, d), fmt(hi, d))
+rng <- function(x, d = 2) sprintf("%s--%s", fmt(min(x), d), fmt(max(x), d))
+int <- function(x) formatC(x, format = "d", big.mark = ",")
+# Numbers that open a sentence are written as words ("Six of the 14 countries")
+num_word <- function(x, cap = FALSE) {
+  w <- if (x >= 0 && x <= 20) c("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+                                "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen",
+                                "eighteen", "nineteen", "twenty")[x + 1] else int(x)
+  if (cap) paste0(toupper(substring(w, 1, 1)), substring(w, 2)) else w
+}
+
+# Problems found while filling (stale inputs, numbers the current model can't give)
+checks <- character(0)
+note <- function(...) checks <<- c(checks, sprintf(...))
+stale <- function(file, than, what) {
+  if (file.exists(file) && file.exists(than) && file.mtime(file) < file.mtime(than)) {
+    note("%s (%s, %s) is OLDER than %s (%s) -- rerun it so the numbers match the current fit.",
+         what, basename(file), format(file.mtime(file), "%Y-%m-%d %H:%M"),
+         basename(than), format(file.mtime(than), "%Y-%m-%d %H:%M"))
+  }
+}
+```
+
+This document recomputes every number in the Results section from the current pipeline outputs and prints the section with the numbers filled in. Report variant: **RDT sensitivity `r SE`** (`r MCMC_OUT_DIR`).
+
+```{r data-stream}
+# ---- 1. Data description --------------------------------------------------
+conc <- fread(file.path(DIR_PULL, "dhs_mis_concordance.csv"))[sub_region == "National"]
+paired <- unique(conc[, .(country, survey_year)])
+paired <- paired[!(country %in% c('Madagascar', 'Kenya'))]
+N_paired_surveys   <- nrow(paired)
+N_paired_countries <- uniqueN(paired$country)
+
+reg_fit  <- readRDS(file.path(REG_DIR, "fit_brms_int_full_local.RDS"))
+N_reg_individuals <- nobs(reg_fit)
+reg_data <- prepare_brms_full_data(SITE_PREV_DIR)
+if (nrow(reg_data) != N_reg_individuals) {
+  note("Regression data now has %s rows but the fitted model used %s -- the fit predates a data change.",
+       int(nrow(reg_data)), int(N_reg_individuals))
+}
+reg_cy <- unique(reg_data[, .(country, survey_year)])
+region <- unique(fread(file.path(SITE_PREV_DIR, "dhs_pfhrp2_merged.csv"))[, .(country, africa_region)])
+reg_cy <- merge(reg_cy, region, by = "country", all.x = TRUE)
+N_reg_surveys    <- nrow(reg_cy)
+N_reg_countries  <- uniqueN(reg_cy$country)
+reg_years        <- range(reg_cy$survey_year)
+reg_countries_by_region <- unique(reg_cy[, .(country, africa_region)])[, .N, by = africa_region]
+reg_surveys_by_region   <- reg_cy[, .N, by = africa_region]
+n_reg_countries_region  <- function(r) reg_countries_by_region[africa_region == r, N]
+```
+
+```{r regression}
+# ---- 2. Regression: FPR / FDR ---------------------------------------------
+cov  <- readRDS(file.path(REG_DIR, "fpfn_by_covariate.RDS"))
+grid <- readRDS(file.path(REG_DIR, "fpfn_full_grid.RDS"))
+stale(file.path(REG_DIR, "fpfn_by_covariate.RDS"), file.path(REG_DIR, "fit_brms_int_full_local.RDS"),
+      "Regression FPR/FDR summaries (step 2 Section B)")
+FPR <- "P(RDT+ | microscopy-)"
+FDR <- "P(microscopy- | RDT+)"
+eff <- function(pattern, oc) cov[grepl(pattern, covariate, fixed = TRUE) & outcome == oc]
+sig <- function(r) r$diff_lo > 0 | r$diff_hi < 0
+eff_txt <- function(r, sign = 1) ci(sign * r$diff_mean, if (sign > 0) r$diff_lo else -r$diff_hi,
+                                    if (sign > 0) r$diff_hi else -r$diff_lo)
+
+fpr_prev_hi  <- eff("Prevalence: >20% vs <10%", FPR)
+fpr_prev_mid <- eff("Prevalence: 10-20% vs <10%", FPR)
+fpr_high_del <- eff("PfHRP2: High vs Slight", FPR)
+fpr_high_sig <- fpr_high_del[sig(fpr_high_del)]
+fdr_high_del <- eff("PfHRP2: High vs Slight", FDR)
+fdr_med_del  <- eff("PfHRP2: Medium vs Slight", FDR)
+
+bin_names <- c(Fever = "Fever", SMC = "SMC", Care = "Formal care/ACT",
+               Timing = "During/after peak season", Age = "Age (+1 year)")
+bin_fpr <- rbindlist(lapply(names(bin_names), function(k) eff(bin_names[[k]], FPR)[, key := k]))
+bin_fdr <- rbindlist(lapply(names(bin_names), function(k) eff(bin_names[[k]], FDR)[, key := k]))
+if (!all(sig(bin_fpr))) note("Not every binary covariate significantly changes the FPR now: %s.",
+                             paste(bin_fpr[!sig(bin_fpr), key], collapse = ", "))
+bin_fpr <- bin_fpr[order(-diff_mean)]
+
+# Strata extremes. tex_prev(): "<10%" -> "$<$10\%" etc. (an unescaped % starts
+# a LaTeX comment and would silently cut the rest of the line).
+tex_prev <- function(x) {
+  x <- gsub("%", "\\%", x, fixed = TRUE)   # fixed = TRUE: replacement is literal, so one backslash
+  x <- sub("^>=?", "$>$", x)
+  sub("^<", "$<$", x)
+}
+grid_lab <- function(r) {
+  paste(c(sprintf("%s prevalence", tex_prev(r$sr_rdt_cat)),
+          sprintf("%s deletion risk", tolower(sub("Marginal/Moderate", "medium", r$hrp2_risk))),
+          if (r$has_smc == 1) "SMC area" else "no SMC",
+          if (r$during_or_after_peak == 1) "survey during or after peak rainfall" else "before peak rainfall",
+          if (r$care_or_act == 1) "received care" else "no care",
+          if (r$fever == 1) "reported fever" else "no fever"), collapse = ", ")
+}
+fpr_grid <- grid[outcome == FPR]; fdr_grid <- grid[outcome == FDR]
+fpr_min <- fpr_grid[which.min(p_mean)]; fpr_max <- fpr_grid[which.max(p_mean)]
+fdr_min <- fdr_grid[which.min(p_mean)]; fdr_max <- fdr_grid[which.max(p_mean)]
+
+# Average marginal effects (fpfn_ame.RDS; method in results/ame_method.txt),
+# percentage points
+ame <- as.data.table(readRDS(file.path(REG_DIR, "fpfn_ame.RDS")))
+stale(file.path(REG_DIR, "fpfn_ame.RDS"), file.path(REG_DIR, "fit_brms_int_full_local.RDS"),
+      "Average marginal effects (step 2 Section B)")
+ame_key <- c("Prevalence: 10-20% vs <10%" = "prevmid", "Prevalence: >20% vs <10%" = "prevhi",
+             "PfHRP2: Medium vs Slight" = "meddel", "PfHRP2: High vs Slight" = "highdel",
+             "Fever" = "fever", "Formal care/ACT" = "care", "SMC" = "smc",
+             "During/after peak season" = "timing", "Age (+1 year)" = "age")
+stopifnot(setequal(ame$covariate, names(ame_key)))
+ame[, out_key := fifelse(outcome == FPR, "fpr", "fdr")]
+# In the filled text the AMEs are \nm{} keys into numbers.tex (registered in
+# the numbers chunk); key = FALSE gives the number itself, for keys holding text.
+ame_ci <- function(o, k, key = TRUE) {
+  if (key) return(sprintf("\\nm{reg.ame.%s.%s.ci}", o, k))
+  r <- ame[out_key == o & ame_key[covariate] == k]; sprintf("%s (%s--%s)", fmt(r$mean, 1), fmt(r$lo, 1), fmt(r$hi, 1))
+}
+# Non-interacting covariates for FPR, largest first: "fever (...), SMC area (...), ... and survey timing (...)"
+ame_bin_lab <- c(fever = "fever", care = "care receipt", smc = "SMC area", age = "age", timing = "survey timing")
+ame_bin <- ame[out_key == "fpr" & ame_key[covariate] %in% names(ame_bin_lab)][order(-abs(mean))]
+ame_bin_list <- function(key) {
+  x <- sprintf("%s (%s%s)", ame_bin_lab[ame_key[ame_bin$covariate]],
+               vapply(ame_key[ame_bin$covariate], function(k) ame_ci("fpr", k, key), ""),
+               fifelse(ame_key[ame_bin$covariate] == "age", " for a one-year increase", ""))
+  paste(paste(head(x, -1), collapse = ", "), "and", tail(x, 1))
+}
+ame_bin_txt <- ame_bin_list(key = TRUE)
+if (!all(ame_bin$lo > 0)) note("Not every non-interacting covariate now significantly increases the FPR (AME); the text says they all do.")
+
+# Country maps (src/plots.R PLOT_FPR_FDR_MAPS): sub-regional rates in each
+# country's most recent survey, summarised by country, with national RDT
+# prevalence (survey-weighted, all RDT-tested children, not only those with LM too)
+map_csv <- file.path(REG_DIR, "fpr_fdr_by_subregion.csv")   # written by src/plots.R (PLOT_FPR_FDR_MAPS)
+stale(map_csv, file.path(REG_DIR, "fit_brms_int_full_local.RDS"), "Country FPR/FDR maps (plots.R PLOT_FPR_FDR_MAPS)")
+map_sr <- fread(map_csv)
+rdt_nat <- fread(file.path(SITE_PREV_DIR, "dhs_mis_individual_hrp2.csv"))[!is.na(rdt_result)][
+  , .(rdt_prev = 100 * weighted.mean(rdt_result == 1, fifelse(is.na(sample_weight), 1, sample_weight))), by = .(country, survey_year)]
+map_nat <- merge(map_sr[, .(fpr_mean = mean(fpr), fpr_min = min(fpr), fpr_max = max(fpr),
+                            fdr_mean = mean(fdr), fdr_min = min(fdr), fdr_max = max(fdr)), by = .(country, survey_year)],
+                 rdt_nat, by = c("country", "survey_year"), all.x = TRUE)
+stopifnot(!anyNA(map_nat$rdt_prev))
+map_nat <- merge(map_nat, region, by = "country", all.x = TRUE)
+map_nat[, key := gsub("[^a-z]", "", tolower(iconv(country, to = "ASCII//TRANSLIT")))]
+map_nat[, rdt_cat := fifelse(rdt_prev < 10, "$<$10\\%", fifelse(rdt_prev <= 20, "10--20\\%", "$>$20\\%"))]
+map_ext <- lapply(c(fpr = "fpr", fdr = "fdr"), function(o) list(min = map_sr[which.min(get(o))], max = map_sr[which.max(get(o))]))
+map_d <- function(x) if (x < 1) 2 else 1   # two decimals below 1%
+# "\nm{reg.map.fpr.min.pci} in \nm{...region}, \nm{...country} (\nm{...year} survey)"
+map_ext_txt <- function(o, s) {
+  k <- sprintf("reg.map.%s.%s", o, s)
+  sprintf("\\nm{%1$s.pci} in \\nm{%1$s.region}, \\nm{%1$s.country} (\\nm{%1$s.year} survey)", k)
+}
+# Example countries named in the text (lowest and a high national FPR)
+map_eg <- lapply(c(lo = "Madagascar", hi = "Togo"), function(ctry) {
+  r <- map_nat[country == ctry]
+  if (nrow(r) != 1) stop("No country map for ", ctry, "; change the example countries in the regression chunk.")
+  r
+})
+# West vs East: mean of the country mean FPRs in WCA vs ESA
+fpr_wca <- map_nat[africa_region == "WCA", mean(fpr_mean)]; fpr_esa <- map_nat[africa_region == "ESA", mean(fpr_mean)]
+```
+
+```{r calibration-data}
+# ---- 3. Calibration data ---------------------------------------------------
+ll      <- readRDS(file.path(GRID_OUT_DIR, log_lik_file(SE)))
+mis     <- as.data.table(readRDS(file.path(SITE_PREV_DIR, "matched_site_mis_prevalence.RDS")))
+fit_sites <- unique(ll$best_by_name1[, .(iso, name_1)])
+N_sites    <- nrow(fit_sites)
+fit_isos   <- unique(fit_sites$iso)
+N_cal_countries <- length(fit_isos)
+cal_obs <- mis[iso3c %in% fit_isos & !is.na(pfpr_rdt_num) & !is.na(pfpr_lm_num)]
+N_cal_surveys <- uniqueN(cal_obs[, .(iso3c, year)])
+cal_years     <- range(cal_obs$year)
+N_deletion_from_review <- ll$deletion_info_by_iso[source == "file", .N]
+
+# RDT/LM: per paired observation (deduplicated on value, as in plots.R's
+# build_mis_scatter()), and per-country slope through the origin
+pairs <- unique(cal_obs[, .(iso = iso3c, year, rdt = pfpr_rdt_num / pfpr_rdt_denom, lm = pfpr_lm_num / pfpr_lm_denom)])
+ratio <- pairs[lm > 0, rdt / lm]
+COUNTRY <- c(BDI = "Burundi", BEN = "Benin", BFA = "Burkina Faso", CIV = "C\\^ote d'Ivoire", GHA = "Ghana",
+             GIN = "Guinea", KEN = "Kenya", LBR = "Liberia", MDG = "Madagascar", MLI = "Mali", MWI = "Malawi",
+             NGA = "Nigeria", RWA = "Rwanda", SEN = "Senegal", TGO = "Togo", UGA = "Uganda")
+slopes <- pairs[, .(slope = coef(lm(rdt ~ 0 + lm))[[1]]), by = iso][, country := COUNTRY[iso]][order(-slope)]
+below1 <- slopes[round(slope, 1) < 1]
+```
+
+```{r convergence}
+# ---- 4. MCMC convergence ------------------------
+mcmc_combined <- readRDS(file.path(MCMC_OUT_DIR, "mcmc_combined.RDS"))
+mcmc_inputs   <- readRDS(file.path(MCMC_OUT_DIR, "mcmc_inputs.RDS"))
+fit_se <- if (is.null(mcmc_inputs$rdt_sensitivity)) 1 else mcmc_inputs$rdt_sensitivity
+post   <- load_hierarchical_posterior(MCMC_OUT_DIR, GRID_OUT_DIR, mcmc_combined = mcmc_combined)
+n_chains <- length(mcmc_combined$chains); n_iter <- mcmc_combined$chains[[1]]$n_iter
+keep <- setdiff(names(mcmc_combined$chains[[1]]$samples), c("iter", "chain", ".chain", ".iteration", ".draw"))
+arr <- array(NA_real_, dim = c(n_iter, n_chains, length(keep)), dimnames = list(NULL, NULL, keep))
+for (k in seq_len(n_chains)) arr[, k, ] <- as.matrix(as.data.frame(mcmc_combined$chains[[k]]$samples)[, keep])
+conv <- as.data.table(posterior::summarise_draws(posterior::as_draws_array(arr), "rhat", "ess_bulk", "ess_tail"))   # posterior_summary_fns.R masks summarise_draws()
+```
+
+```{r convergence-summary}
+if (!isTRUE(all.equal(fit_se, SE))) {
+  note("The MCMC fit in %s was run with RDT sensitivity %.2f, not the requested %.2f.", MCMC_OUT_DIR, fit_se, SE)
+}
+site_names <- post$site_names
+pop_conv  <- conv[variable %in% c("mu_d", "sigma_d")]
+site_conv <- conv[grepl("^log_d_[0-9]+$|^log_eir_[0-9]+$", variable)]
+site_conv[, site := site_names[as.integer(sub("^log_d_|^log_eir_", "", variable))]]
+N_site_pars   <- nrow(site_conv)
+N_rhat_ok     <- site_conv[rhat <= 1.01, .N]
+N_ess_ok      <- site_conv[ess_bulk >= 400, .N]
+flagged       <- unique(site_conv[rhat > 1.01 | ess_bulk < 400 | ess_tail < 400, site])
+ps <- mcmc_combined$pooled_samples
+flag_cor <- sapply(flagged, function(s) {
+  i <- match(s, site_names); abs(cor(ps[[paste0("log_d_", i)]], ps[[paste0("log_eir_", i)]]))
+})
+grid_pts <- ll$by_name1_grid_point
+edge_hl  <- range(grid_pts$hrp2_scale); edge_eir <- range(grid_pts$eir)
+flag_edge <- ll$best_by_name1[paste(iso, name_1, sep = "_") %in% flagged &
+                                (hrp2_scale %in% edge_hl | eir %in% edge_eir)]
+worst <- site_conv[order(-rhat)][1]
+```
+
+```{r posterior}
+# ---- 5. Posterior estimates -----------------------------------------------
+pop   <- get_population_parameters(post)
+mu_hl <- pop[parameter == "halflife_pop_median"]
+sig_d <- ps$sigma_d
+newsite <- predict_unobserved_site(post, seed = 1L)$draws$halflife
+new_q   <- quantile(newsite, c(0.5, 0.025, 0.975))
+eir_med <- apply(as.matrix(ps[, paste0("eir_", seq_along(site_names)), with = FALSE]), 2, median)
+
+priors_sim <- simulate_hierarchical_priors(mcmc_inputs$log_eir_bounds, mcmc_inputs$log_d_bounds, priors = mcmc_inputs$priors)
+prior_mu_hl <- priors_sim$mu_d_natural * log(2)
+prior_centre <- exp(mcmc_inputs$priors$mu_d_mean) * log(2)
+
+site_hl <- summarise_site_parameters(post, by = "site", weights = params$agg_weights)
+site_hl[, country := COUNTRY[sub("_.*", "", site)]]
+hl_min <- site_hl[which.min(halflife_median)]; hl_max <- site_hl[which.max(halflife_median)]
+# Sites outside the unobserved-site 95% predictive interval, either side
+outside <- site_hl[halflife_median > new_q[3] | halflife_median < new_q[2]]
+n_above <- outside[halflife_median > new_q[3], .N]; n_below <- outside[halflife_median < new_q[2], .N]
+outside[, side := fifelse(halflife_median > new_q[3], "above", "below")]
+outside_by_country <- outside[, .(N = .N, above = sum(side == "above"), below = sum(side == "below")), by = country][order(-N, country)]
+outside_by_country[, side_txt := fifelse(below == 0, "all above", fifelse(above == 0, "all below",
+                                                                           sprintf("%d above, %d below", above, below)))]
+country_hl <- summarise_site_parameters(post, by = "country", weights = params$agg_weights)
+country_hl[, country_name := COUNTRY[iso]]
+all_below <- site_hl[, .(all_below = all(halflife_median < prior_centre)), by = country][all_below == TRUE, country]
+low_c <- country_hl[country_name %in% all_below][order(halflife_median)]
+```
+
+```{r ppc}
+# ---- 6. Posterior predictive coverage --------------------------------------
+ppi_path <- file.path(PPI_DIR, "posterior_predictive_summary.RDS")
+ppc <- NULL
+if (!file.exists(ppi_path)) {
+  note("No posterior_predictive_summary.RDS for this fit -- run step 4 (src/4_sample_posterior/sample_posterior.R).")
+} else if (file.mtime(ppi_path) < file.mtime(file.path(MCMC_OUT_DIR, "mcmc_combined.RDS"))) {
+  note("posterior_predictive_summary.RDS is older than this fit's mcmc_combined.RDS -- coverage not reported; rerun step 4 (src/4_sample_posterior/sample_posterior.R).")
+} else {
+  ppi <- as.data.table(readRDS(ppi_path))
+  joint <- all(c("tp_lo", "fp_lo", "fn_lo", "tn_lo") %in% names(ppi))
+  if (joint) {
+    obs <- unique(mis[!is.na(joint_n) & joint_n > 0, .(iso = iso3c, name_1, year,
+            tp = joint_tp / joint_n, fp = joint_fp / joint_n, fn = joint_fn / joint_n, tn = joint_tn / joint_n)])
+    chk <- merge(obs, ppi, by = c("iso", "name_1", "year"))
+    cells <- c(TP = "tp", FP = "fp", FN = "fn", TN = "tn")
+  } else {
+    note("Posterior predictive summary has no TP/FP/FN/TN cells (submitted before joint = TRUE) -- reporting RDT/LM coverage.")
+    obs <- unique(mis[, .(iso = iso3c, name_1, year, rdt = pfpr_rdt_num / pfpr_rdt_denom, lm = pfpr_lm_num / pfpr_lm_denom)])
+    chk <- merge(obs, ppi[, .(iso, name_1, year, rdt_lo = hrp2_lo, rdt_hi = hrp2_hi, lm_lo, lm_hi)], by = c("iso", "name_1", "year"))
+    cells <- c(RDT = "rdt", LM = "lm")
+  }
+  for (cl in cells) chk[, (paste0(cl, "_in")) := get(cl) >= get(paste0(cl, "_lo")) & get(cl) <= get(paste0(cl, "_hi"))]
+  ppc_all <- sapply(cells, function(cl) 100 * mean(chk[[paste0(cl, "_in")]], na.rm = TRUE))
+  ppc_cty <- chk[, lapply(.SD, function(x) 100 * mean(x, na.rm = TRUE)), by = iso, .SDcols = paste0(cells, "_in")]
+  setnames(ppc_cty, paste0(cells, "_in"), names(cells))
+  ppc_cty[, country := COUNTRY[iso]][, mean_cov := rowMeans(.SD), .SDcols = names(cells)]
+  ppc <- list(joint = joint, all = ppc_all, by_country = ppc_cty[order(mean_cov)], cells = cells)
+
+  # Marginal RDT (TP + FP) and LM (TP + FN) coverage from our model, and RDT
+  # coverage under the Wu et al. RDT:microscopy relationship applied to the
+  # same LM draws (step 4 Section I). Same joint-tested children as above.
+  marg_cols <- c(RDT = "rdtj", LM = "lmj", `RDT (Wu et al.)` = "rdtwu")
+  if (joint && all(paste0(marg_cols, "_lo") %in% names(chk))) {
+    chk[, `:=`(rdt_obs = tp + fp, lm_obs = tp + fn)]
+    obs_col <- c(rdtj = "rdt_obs", lmj = "lm_obs", rdtwu = "rdt_obs")
+    for (m in marg_cols) chk[, (paste0(m, "_in")) := get(obs_col[[m]]) >= get(paste0(m, "_lo")) & get(obs_col[[m]]) <= get(paste0(m, "_hi"))]
+    ppc$marg_all <- setNames(sapply(marg_cols, function(m) 100 * mean(chk[[paste0(m, "_in")]], na.rm = TRUE)), marg_cols)
+    ppc$marg_cty <- chk[, lapply(.SD, function(x) 100 * mean(x, na.rm = TRUE)), by = iso, .SDcols = paste0(marg_cols, "_in")]
+    setnames(ppc$marg_cty, paste0(marg_cols, "_in"), marg_cols)
+    ppc$marg_cty[, country := COUNTRY[iso]]
+    # Numerator / denominator: survey-years inside the interval / survey-years compared
+    kn <- function(x) sprintf("%d/%d (%s%%)", sum(x, na.rm = TRUE), sum(!is.na(x)), fmt(100 * mean(x, na.rm = TRUE), 0))
+    ppc$marg_kn  <- chk[, lapply(.SD, kn), by = iso, .SDcols = paste0(marg_cols, "_in")]
+    setnames(ppc$marg_kn, paste0(marg_cols, "_in"), marg_cols)
+    ppc$marg_kn[, country := COUNTRY[iso]]
+    ppc$marg_k <- setNames(sapply(marg_cols, function(m) sum(chk[[paste0(m, "_in")]], na.rm = TRUE)), marg_cols)
+    ppc$marg_n <- setNames(sapply(marg_cols, function(m) sum(!is.na(chk[[paste0(m, "_in")]]))), marg_cols)
+    wu_sd_path <- file.path(PPI_DIR, "wu_residual_sd.RDS")
+    ppc$wu_sd <- if (file.exists(wu_sd_path)) readRDS(wu_sd_path) else NULL
+  } else if (joint) {
+    note("No marginal RDT/LM or Wu et al. intervals in posterior_predictive_summary.RDS -- rerun step 4 Section I (AGG_POST = TRUE).")
+  }
+}
+```
+
+```{r emulator-near-peak}
+# ---- 7. Emulator fit near the peak -----------------------------------------
+# Step 3b's leave-one-out RMSE over the grid points within 3 log-likelihood
+# units of each site's best grid point (loo_cv_emulators(): rmse_near); 3 units
+# ~ the 95% joint region for two parameters (chi-squared(2) 95% critical value
+# 5.99 / 2), i.e. where the posterior sits. Sites with rmse_near above
+# EMU_FLAG_RMSE are flagged (identify_poor_loo_sites()). EMU_POOR_ISO:
+# countries whose near-peak error is reported separately in the text
+# (Rwanda: simulation noise in the likelihood surface; Senegal: raised error
+# across the whole country).
+source("./src/functions/emulator_fns.R")
+NEAR_PEAK_TEXT <- 3
+EMU_FLAG_RMSE  <- formals(identify_poor_loo_sites)$near_peak_rmse_threshold
+EMU_POOR_ISO   <- c("RWA", "SEN")
+emu_val_path <- file.path(rdt_sensitivity_dir(DIR_EMULATOR, SE), "emulator_validation.rds")
+emu_val   <- readRDS(emu_val_path)
+if (is.null(emu_val$loo$rmse_near)) stop("emulator_validation.rds predates the near-peak flag -- rerun step 3b Section D.")
+near_peak <- emu_val$loo[, .(site, iso = sub("_.*", "", site), n = n_near, rmse = rmse_near)]
+poor_emulator <- emu_val$poor_sites
+# LM prevalence in each poorly emulated country's most recent survey (pooled
+# over its sites), for the "low transmission" clause
+emu_poor_lm <- cal_obs[iso3c %in% EMU_POOR_ISO][, .SD[year == max(year)], by = iso3c][
+  , .(year = year[1], lm = sum(pfpr_lm_num) / sum(pfpr_lm_denom)), by = iso3c]
+```
+
+```{r sensitivity-fits}
+# ---- 8. Sensitivity fits: RDT sensitivity and sigma_d prior SD -------------
+# Prior and posterior summaries for every fit, used in the text and in the two
+# prior/posterior tables. q3() = median, 2.5% and 97.5% quantiles.
+q3 <- function(x) quantile(x, c(0.5, 0.025, 0.975))
+fit_post <- function(rdt_se, sd, full = FALSE) {
+  d <- mcmc_variant_dir(rdt_se, sd)
+  m <- readRDS(file.path(d, "mcmc_combined.RDS")); s <- m$pooled_samples
+  n_site <- sum(grepl("^eir_[0-9]+$", names(s)))
+  out <- list(mu  = q3(log_d_to_halflife(s$mu_d)), sd = q3(s$sigma_d),
+              eir = q3(apply(as.matrix(s[, paste0("eir_", seq_len(n_site)), with = FALSE]), 2, median)))
+  if (!full) return(out)
+  # sigma_d prior-SD fits: priors and unobserved-site predictions as well
+  inp <- readRDS(file.path(d, "mcmc_inputs.RDS"))
+  stopifnot(isTRUE(all.equal(inp$priors$sigma_d_prior_sd, sd)))
+  pr  <- simulate_hierarchical_priors(inp$log_eir_bounds, inp$log_d_bounds, priors = inp$priors)
+  pv  <- load_hierarchical_posterior(d, GRID_OUT_DIR, mcmc_combined = m)
+  nq  <- q3(predict_unobserved_site(pv, seed = 1L)$draws$halflife)
+  shl <- summarise_site_parameters(pv, by = "site", weights = params$agg_weights)
+  c(out, list(pr_mu = q3(pr$mu_d_natural * log(2)), pr_sd = q3(pr$sigma_d), pr_new = q3(pr$d * log(2)),
+              pr_eir = q3(pr$eir), new = nq,
+              n_out = shl[halflife_median < nq[2] | halflife_median > nq[3], .N], n_site = nrow(shl)))
+}
+se_post   <- lapply(RDT_SENSITIVITY_OPTIONS, fit_post, sd = SIGMA_D_PRIOR_SD_MAIN)
+SIGMA_SDS <- c(SIGMA_D_PRIOR_SD_MAIN, SIGMA_D_PRIOR_SD_OPTIONS)
+sig_fit   <- lapply(SIGMA_SDS, function(sd) fit_post(RDT_SENSITIVITY_MAIN, sd, full = TRUE))
+```
+
+# Filled Results section
+
+Copy the block below into the manuscript. Text in `[[double brackets]]` couldn't be filled from the current outputs; see **Checks** at the end.
+
+```{r filled, results = "asis"}
+P <- list()
+add <- function(...) P[[length(P) + 1]] <<- paste0(...)
+
+# Data-stream numbers as \nm{data.*} keys (numbers chunk)
+add("We identified \\nm{data.paired.surveys} surveys from \\nm{data.paired.countries} countries with paired LM and RDT prevalence estimates from MIS and DHS surveys (Appendix \\ref{fig:data_stream}). Of these \\nm{data.paired.surveys} surveys, \\nm{data.reg.surveys} had all individual-level determinants utilised in the regression analysis and occurred between \\nm{data.reg.year.start}--\\nm{data.reg.year.end} across \\nm{data.reg.countries} countries (\\nm{data.reg.countries.esa}/\\nm{data.reg.countries} in ESA and \\nm{data.reg.countries.wca}/\\nm{data.reg.countries} in WCA). The regression analysis utilised data from \\nm{data.reg.indiv} individuals.")
+
+fpr_high_txt <- if (nrow(fpr_high_sig) == 0) {
+  "however, no reduction was significant"
+} else {
+  sprintf("however, the only significant effect%s in areas with prevalence %s (reduction of %s)",
+          if (nrow(fpr_high_sig) == 1) " was" else "s were",
+          paste(tex_prev(gsub(".*prevalence: ([^)]*)\\).*", "\\1", fpr_high_sig$covariate)), collapse = " and "),
+          # \nm{reg.fpr.highdel.<lo|mid|hi>.pci}, registered in the numbers chunk
+          paste(vapply(gsub(".*prevalence: ([^)]*)\\).*", "\\1", fpr_high_sig$covariate), function(p) {
+            sprintf("\\nm{reg.fpr.highdel.%s.pci}", if (grepl("^<", p)) "lo" else if (grepl("^>", p)) "hi" else "mid")
+          }, ""), collapse = "; "))
+}
+bin_txt <- paste(vapply(seq_len(nrow(bin_fpr)), function(i) {
+  r <- bin_fpr[i]; lab <- c(Fever = "fever", SMC = "SMC area", Care = "care receipt", Timing = "survey timing", Age = "age")[[r$key]]
+  sprintf("%s (%s\\%% (%s--%s)%s)", lab, fmt(r$diff_mean, 2), fmt(r$diff_lo, 2), fmt(r$diff_hi, 2),
+          if (r$key == "Age") " for one year increase" else "")
+}, ""), collapse = ", ")   # reference-child effects; kept for \nm{reg.fpr.bin.ordered}
+# Map numbers as \nm{reg.map.*} keys (numbers chunk)
+mk <- function(r, v) sprintf("\\nm{reg.map.%s.%s}", r$key, v)
+eg_txt <- function(r) sprintf("In the %s %s survey, national RDT prevalence was %s and the national mean FPR was %s\\%%",
+                              mk(r, "year"), r$country, mk(r, "rdtcat"), mk(r, "fpr.mean"))
+add(sprintf("Higher sub-regional prevalence increased the FPR across \\pfhrp{} deletion levels: the average marginal effect was an increase of %s and %s percentage points for prevalence of 10--20\\%% and $>$20\\%% vs $<$10\\%%, respectively (Appendix Figure \\ref{fig:app_fpr_fdr}). %s (minimum %s\\%% to maximum %s\\%% across regions) (Figure \\ref{fig:regression}). %s (%s\\%%--%s\\%%) (Figure \\ref{fig:regression}). High risk of \\pfhrp{} deletion reduced FPR; %s, such as those in southern Madagascar (Figure \\ref{fig:regression}). Due to spatial patterns in malaria prevalence and \\pfhrp{} deletion risk, FPR was %s in Western African countries than in Eastern African countries (Figure \\ref{fig:regression}). All other fixed effects significantly increased the FPR; in order of average marginal effect (percentage points): %s (Appendix Figure \\ref{fig:app_fpr_fdr}). Across all regions, the FPR ranged from %s to %s.",
+  ame_ci("fpr", "prevmid"), ame_ci("fpr", "prevhi"),
+  eg_txt(map_eg$lo), mk(map_eg$lo, "fpr.min"), mk(map_eg$lo, "fpr.max"),
+  eg_txt(map_eg$hi), mk(map_eg$hi, "fpr.min"), mk(map_eg$hi, "fpr.max"),
+  fpr_high_txt, if (fpr_wca > fpr_esa) "higher" else "lower", ame_bin_txt,
+  map_ext_txt("fpr", "min"), map_ext_txt("fpr", "max")))
+
+# Wording checks for the FDR paragraph (AMEs; Kenya as the high-deletion,
+# low-prevalence example)
+ame_fdr <- ame[out_key == "fdr"][, k := ame_key[covariate]]
+if (ame_fdr[which.max(mean), k] != "care") note("Care receipt no longer has the largest positive AME on the FDR; the text says it does.")
+if (ame_fdr[k == "smc", mean] < 0) note("SMC now decreases the FDR (AME); the text says it increases it.")
+if (any(ame_fdr[k %in% c("fever", "age"), mean] > 0)) note("Fever or age now increases the FDR (AME); the text says both reduce it.")
+if (ame_fdr[k == "highdel", lo] <= 0) note("High deletion risk no longer significantly increases the FDR (AME); the text says it does.")
+fdr_eg <- map_nat[country == "Kenya"]
+if (nrow(fdr_eg) != 1) stop("No country map for Kenya; change the FDR example country.")
+if (!all(map_sr[country == "Kenya", hrp2_risk] == "High") || fdr_eg$rdt_prev >= 10)
+  note("Kenya is no longer high deletion risk throughout with RDT prevalence $<$10\\%%; the FDR example needs rewording.")
+add(sprintf("The FDR was high across strata, ranging from %s to %s. FDR was higher in areas with high risk of \\pfhrp{} deletion, independent of differences due to prevalence. %s with high risk of \\pfhrp{} deletion and low RDT prevalence (%s) had a national mean FDR of %s\\%% (%s\\%%--%s\\%% across regions) in its %s survey (Figure \\ref{fig:regression}). Recent care had the largest positive impact on the FDR of all covariates (average marginal effect of %s percentage points). Living in an SMC area increased the FDR by %s percentage points. Recent fever and a one-year increase in age reduced the FDR by %s and %s percentage points, respectively.",
+  map_ext_txt("fdr", "min"), map_ext_txt("fdr", "max"),
+  fdr_eg$country, mk(fdr_eg, "rdtcat"), mk(fdr_eg, "fdr.mean"), mk(fdr_eg, "fdr.min"), mk(fdr_eg, "fdr.max"), mk(fdr_eg, "year"),
+  ame_ci("fdr", "care"), ame_ci("fdr", "smc"), ame_ci("fdr", "fever"), ame_ci("fdr", "age")))
+
+# "A, B, and C" (Oxford comma, as in the manuscript)
+and_list <- function(x) if (length(x) <= 2) paste(x, collapse = " and ") else
+  paste0(paste(x[-length(x)], collapse = ", "), ", and ", x[length(x)])
+q_txt <- function(x, d = 2) sprintf("%s (IQR %s--%s)", fmt(median(x), d), fmt(quantile(x, 0.25), d), fmt(quantile(x, 0.75), d))
+
+# Emulator fit near the peak (emulator-near-peak chunk)
+np_good <- near_peak[!iso %in% EMU_POOR_ISO]
+np_poor <- vapply(EMU_POOR_ISO, function(i) q_txt(near_peak[iso == i, rmse]), "")
+lm_max  <- max(emu_poor_lm$lm)
+lm_cut  <- ceiling(100 * lm_max)   # smallest whole % above every poorly emulated country's recent LM prevalence
+emu_txt <- sprintf("Emulator fit near the peak (within %d log-likelihood units of the peak) was good at most sites outside %s (%d sites; median RMSE %s, IQR %s--%s). Median RMSE near the peak was %s, %s.",
+  NEAR_PEAK_TEXT, and_list(COUNTRY[EMU_POOR_ISO]), nrow(np_good),
+  fmt(median(np_good$rmse), 2), fmt(quantile(np_good$rmse, 0.25), 2), fmt(quantile(np_good$rmse, 0.75), 2),
+  and_list(sprintf("%s in %s", np_poor, COUNTRY[EMU_POOR_ISO])),
+  sprintf("%s countries where LM prevalence in recent MIS surveys was less than %d\\%%",
+          if (length(EMU_POOR_ISO) == 2) "both" else "all", lm_cut))
+
+add(sprintf("Of the %s surveys with paired LM and RDT prevalence, %d countries had sufficient sub-national paired observations for calibration, yielding %d surveys utilised in the calibration analyses (Appendix \\ref{fig:data_stream}). These %d surveys took place between %d-%d and comprised %d admin-1 units. %s of the %d countries had pooled values of \\pfhrp{} gene deletion prevalence (Appendix Table \\ref{tab:deletion}).\\cite{thomson_prevalence_2020} Median RDT prevalence was %sx (interquartile range: %s-%s) higher than median LM prevalence. %s had the largest disparity between LM and RDT prevalence, with a RDT to LM prevalence ratio of %s (Figure \\ref{fig:halflife}). %s %s",
+  int(N_paired_surveys), N_cal_countries, N_cal_surveys, N_cal_surveys, cal_years[1], cal_years[2], N_sites,
+  num_word(N_deletion_from_review, cap = TRUE), N_cal_countries,
+  fmt(median(ratio), 1), fmt(quantile(ratio, 0.25), 1), fmt(quantile(ratio, 0.75), 1),
+  slopes$country[1], fmt(slopes$slope[1], 1),
+  if (nrow(below1) == 0) "No country had an RDT to LM prevalence ratio below one." else
+    sprintf("%s %s the only countr%s to have RDT to LM prevalence ratios below one (%s, Figure \\ref{fig:halflife}).",
+            paste(below1$country, collapse = " and "), if (nrow(below1) == 1) "was" else "were",
+            if (nrow(below1) == 1) "y" else "ies", paste(fmt(below1$slope, 1), collapse = " and ")),
+  emu_txt))
+
+# Population parameters, sigma_d prior sensitivity, RDT sensitivity range
+# (sensitivity-fits chunk)
+SE_LAB <- sprintf("%d\\%%", round(100 * SE))
+sig_main <- sig_fit[[which(is_main_sigma_sd(SIGMA_SDS))]]
+sig_alt  <- sig_fit[!is_main_sigma_sd(SIGMA_SDS)]
+sig_txt <- sprintf("Estimates of $\\sigma_P$ were sensitive to the variance of its prior: increasing the prior SD from %s to %s raised the posterior median of $\\sigma_P$ from %s to %s, while the population half-life changed little (%s days) (Appendix Table \\ref{tab:sigma_variance}).",
+  format(SIGMA_D_PRIOR_SD_MAIN), and_list(format(SIGMA_D_PRIOR_SD_OPTIONS)),
+  ci(sig_main$sd[1], sig_main$sd[2], sig_main$sd[3]),
+  and_list(vapply(sig_alt, function(f) ci(f$sd[1], f$sd[2], f$sd[3]), "")),
+  and_list(vapply(sig_fit, function(f) fmt(f$mu[1]), "")))
+se_lo <- se_post[[which.min(RDT_SENSITIVITY_OPTIONS)]]$mu; se_hi <- se_post[[which.max(RDT_SENSITIVITY_OPTIONS)]]$mu
+add(sprintf("The posterior median of $\\mu_P$ corresponded to a half-life of %s days (95\\%% credible interval (CI) %s--%s days) and the posterior median of $\\sigma_P$ was %s (%s--%s) (Table \\ref{tab:post}) assuming %s RDT sensitivity. %s The population median HRP2 half-life ranged from %s days (%s--%s) at %d\\%% sensitivity to %s days (%s--%s) at %d\\%% sensitivity (Table \\ref{tab:post}). For a new site in a country not included in this analysis under the %s sensitivity assumption, the model predicts a median HRP2 half-life of %s days (95\\%% predictive interval %s--%s days) (Figure \\ref{fig:halflife}). Across the %d sites included in this analysis, the median posterior EIR was %s (95\\%% range %s-%s) (Table \\ref{tab:post}).",
+  fmt(mu_hl$median), fmt(mu_hl$q025), fmt(mu_hl$q975),
+  fmt(median(sig_d), 2), fmt(quantile(sig_d, 0.025), 2), fmt(quantile(sig_d, 0.975), 2), SE_LAB, sig_txt,
+  fmt(se_hi[1]), fmt(se_hi[2]), fmt(se_hi[3]), round(100 * max(RDT_SENSITIVITY_OPTIONS)),
+  fmt(se_lo[1]), fmt(se_lo[2]), fmt(se_lo[3]), round(100 * min(RDT_SENSITIVITY_OPTIONS)),
+  SE_LAB, fmt(new_q[1]), fmt(new_q[2]), fmt(new_q[3]), N_sites,
+  fmt(median(eir_med), 2), fmt(quantile(eir_med, 0.025), 1), fmt(quantile(eir_med, 0.975), 1)))
+
+# Site and country half-lives, then posterior predictive coverage (one paragraph)
+c_txt <- function(r) sprintf("%s days (95\\%% CI %s-%s) in %s", fmt(r$halflife_median), fmt(r$halflife_q025), fmt(r$halflife_q975), r$country_name)
+ch <- country_hl[order(halflife_median)]
+side_list <- function(sd) {
+  o <- outside[side == sd, .N, by = country][order(-N, country)]
+  and_list(sprintf("%s (%d/%d)", o$country, o$N, sum(o$N)))
+}
+side_txt <- c(
+  if (n_below > 0) sprintf("The sites below the lower limit of the unobserved site were in %s", side_list("below")),
+  if (n_above > 0) sprintf("the sites above the upper limit were in %s", side_list("above")))
+side_txt <- if (length(side_txt) == 2) paste0(side_txt[1], " while ", side_txt[2], ". ") else
+  if (length(side_txt) == 1) paste0(toupper(substring(side_txt, 1, 1)), substring(side_txt, 2), ". ") else ""
+# Countries whose country-level median half-life lies outside the interval
+c_out <- country_hl[halflife_median < new_q[2] | halflife_median > new_q[3], country_name]
+c_out_txt <- if (length(c_out) == 0) "No country had a median decay half-life outside of the unobserved-site predictive interval nationally" else
+  sprintf("%s %s the only countr%s to have a median decay half-life outside of the unobserved-site predictive interval nationally",
+          and_list(c_out), if (length(c_out) == 1) "was" else "were", if (length(c_out) == 1) "y" else "ies")
+ppc_txt <- if (is.null(ppc)) "[[Posterior predictive coverage: not available for this fit -- see Checks.]]" else {
+  worst_c <- ppc$by_country[1]; best_c <- ppc$by_country[.N]
+  cell_pct <- function(r) paste(sprintf("%s %s\\%%", names(ppc$cells), fmt(unlist(r[, names(ppc$cells), with = FALSE]), 0)), collapse = ", ")
+  sprintf("The posterior predictive coverage of the 95\\%% predictive interval was %s across all sites (Appendix Table \\ref{tab:site_posteriors_%s}). The lowest mean coverage was in %s (%s) and the highest in %s (%s).",
+    paste(sprintf("%s\\%% for %s", fmt(ppc$all, 1), names(ppc$cells)), collapse = ", "), rdt_sensitivity_tag(SE),
+    worst_c$country, cell_pct(worst_c), best_c$country, cell_pct(best_c))
+}
+add(sprintf("Site-specific HRP2 half-lives ranged from %s days (%s in %s) to %s days (%s in %s). There were %d/%d sites with half-lives outside the 95\\%% predictive interval of an unobserved site (%s--%s days; %d below and %d above)%s%s%s (Figure \\ref{fig:halflife}). Country-level median half-lives ranged from %s to %s (Figure \\ref{fig:halflife}). %s",
+  fmt(hl_min$halflife_median), sub("^[A-Z]{3}_", "", hl_min$site), hl_min$country,
+  fmt(hl_max$halflife_median), sub("^[A-Z]{3}_", "", hl_max$site), hl_max$country,
+  nrow(outside), N_sites, fmt(new_q[2]), fmt(new_q[3]), n_below, n_above,
+  if (nrow(outside) == 0) ". " else ", indicating half-lives inconsistent with the population distribution. ",
+  side_txt, c_out_txt, c_txt(ch[1]), c_txt(ch[.N]), ppc_txt))
+
+filled <- paste(unlist(P), collapse = "\n\n")
+cat("```latex\n", filled, "\n```\n", sep = "")
+```
+
+# Table: prior and posterior
+
+```{r table, results = "asis"}
+# Shared table format: src/functions/tex_table_fns.R
+pr_mu <- q3(prior_mu_hl); pr_sd <- q3(priors_sim$sigma_d); pr_eir <- q3(priors_sim$eir)
+n_se <- length(se_post)
+post_row <- function(lab, pr, key, d) tab_row(lab, c(tab_ci(pr, d), vapply(se_post, function(p) tab_ci(p[[key]], d), "")), indent = FALSE)
+tab <- tex_float_table(
+  paste("l c", paste(rep("c", n_se), collapse = " ")),
+  c(sprintf(" & & \\multicolumn{%d}{c}{\\textbf{Posterior, by RDT sensitivity}} \\\\", n_se),
+    sprintf("\\cmidrule(l){3-%d}", 2 + n_se),
+    sprintf("\\textbf{Parameter} & \\textbf{Prior} & %s \\\\",
+            paste(sprintf("\\textbf{%d\\%%}", round(100 * RDT_SENSITIVITY_OPTIONS)), collapse = " & "))),
+  c(post_row("$\\mu_P$ (half-life, days)", pr_mu, "mu", TAB_DP[["halflife"]]),
+    post_row("$\\sigma_P$", pr_sd, "sd", TAB_DP[["sigma"]]),
+    post_row("EIR (pooled)", pr_eir, "eir", TAB_DP[["eir"]])),
+  "Prior and posterior estimates (median and 95\\% credible interval) by assumed RDT sensitivity. EIR is pooled across sites.",
+  "tab:post")
+cat("```latex\n", paste(tab, collapse = "\n"), "\n```\n", sep = "")
+```
+
+# Table: prior and posterior by $\sigma_d$ prior SD
+
+```{r table-sigma-prior, results = "asis"}
+# One column per sigma_P prior SD (RDT sensitivity 0.9 throughout; sig_fit
+# from the sensitivity-fits chunk). Only the sigma_P prior differs between
+# fits, so the prior block shows how that one change propagates to the prior
+# predictive half-life of an unobserved site; the posterior block shows the
+# fitted values and how many sites fall outside each fit's own
+# unobserved-site interval.
+n_col <- length(SIGMA_SDS)
+srow  <- function(lab, key, d) tab_row(lab, vapply(sig_fit, function(f) tab_ci(f[[key]], d), ""))
+tab_sig <- tex_float_table(
+  paste("l", paste(rep("c", n_col), collapse = " ")),
+  c(sprintf(" & \\multicolumn{%d}{c}{\\textbf{$\\sigma_P$ prior SD}} \\\\", n_col),
+    sprintf("\\cmidrule(l){2-%d}", 1 + n_col),
+    sprintf("\\textbf{Parameter} & %s \\\\",
+            paste(sprintf("\\textbf{%s%s}", formatC(SIGMA_SDS, format = "f", digits = 2),
+                          ifelse(is_main_sigma_sd(SIGMA_SDS), " (main)", "")), collapse = " & "))),
+  c(tab_group("Prior", 1 + n_col),
+    srow("$\\mu_P$ (half-life, days)", "pr_mu", TAB_DP[["halflife"]]),
+    srow("$\\sigma_P$", "pr_sd", TAB_DP[["sigma"]]),
+    srow("Unobserved-site half-life (days)", "pr_new", TAB_DP[["halflife"]]),
+    srow("EIR", "pr_eir", TAB_DP[["eir"]]),
+    "\\midrule",
+    tab_group("Posterior", 1 + n_col),
+    srow("$\\mu_P$ (half-life, days)", "mu", TAB_DP[["halflife"]]),
+    srow("$\\sigma_P$", "sd", TAB_DP[["sigma"]]),
+    srow("Unobserved-site half-life (days)", "new", TAB_DP[["halflife"]]),
+    srow("EIR (pooled)", "eir", TAB_DP[["eir"]]),
+    tab_row("Sites outside unobserved-site interval", vapply(sig_fit, function(f) sprintf("%d/%d", f$n_out, f$n_site), ""))),
+  sprintf("Prior and posterior estimates (median and 95\\%% credible interval) by $\\sigma_P$ prior standard deviation (SD), assuming %d\\%% RDT sensitivity. The unobserved-site half-life is the predicted HRP2 half-life for a site in a country not included in the analysis. Posterior EIR is pooled across sites.",
+          round(100 * RDT_SENSITIVITY_MAIN)),
+  "tab:sigma_variance")
+cat("```latex\n", paste(tab_sig, collapse = "\n"), "\n```\n", sep = "")
+```
+
+# Table: site posteriors
+
+```{r table-sites, results = "asis"}
+# One row per site: posterior median (95% CrI) of EIR and HRP2 half-life
+# (d x ln 2, days), grouped by country, sites alphabetical within country.
+# Flag column: "Emulator" = step 3b leave-one-out RMSE within 3 log-likelihood
+# units of the peak above EMU_FLAG_RMSE (identify_poor_loo_sites();
+# poor_emulator from the emulator-near-peak chunk);
+# "Convergence" = a site parameter with Rhat > 1.01 or bulk/tail ESS < 400
+# (same criteria as the convergence paragraph).
+# PPC: the site's posterior predictive coverage -- of its observed TP
+# (RDT+/LM+), FP (RDT+/LM-), FN (RDT-/LM+) and TN (RDT-/LM-) shares, four per
+# survey year, the number inside their step 4 95% PPI (the same per-survey
+# check as the coverage paragraph).
+stale(emu_val_path, file.path(MCMC_OUT_DIR, "mcmc_combined.RDS"), "Emulator validation (step 3b Section D)")
+
+tex_escape <- function(x) gsub("([&%$#_{}])", "\\\\\\1", x)
+site_tab <- rbindlist(lapply(seq_along(site_names), function(i) {
+  d <- ps[[paste0("d_", i)]] * log(2); e <- ps[[paste0("eir_", i)]]
+  data.table(site = site_names[i], iso = sub("_.*", "", site_names[i]), name_1 = sub("^[A-Z]{3}_", "", site_names[i]),
+             eir = tab_ci(quantile(e, c(0.5, 0.025, 0.975)), TAB_DP[["eir"]]),
+             halflife = tab_ci(quantile(d, c(0.5, 0.025, 0.975)), TAB_DP[["halflife"]]), halflife_med = median(d))
+}))
+# Red: posterior median half-life outside the 95% predictive interval for an
+# unobserved site (new_q, posterior chunk)
+site_tab[halflife_med < new_q[[2]] | halflife_med > new_q[[3]], halflife := sprintf("\\textcolor{red}{%s}", halflife)]
+site_tab[, country := COUNTRY[iso]]
+site_tab[, flag := vapply(site, function(s) {
+  # One-letter codes (defined in the caption) keep the table inside the A4 text width
+  f <- c(if (s %in% poor_emulator) "E", if (s %in% flagged) "C")
+  if (length(f)) paste(f, collapse = ", ") else "--"
+}, "")]
+# Countries sorted on the plain name (the LaTeX accent in C\^ote would sort it last)
+site_tab[, country_sort := gsub("\\^", "", country, fixed = TRUE)]
+setorder(site_tab, country_sort, name_1)
+
+if (is.null(ppc) || !ppc$joint) {
+  note("No current joint (TP/FP/FN/TN) posterior predictive summary -- site table PPC left as --.")
+} else {
+  site_ppc <- melt(chk[, .(site = paste(iso, name_1, sep = "_"), year, tp_in, fp_in, fn_in, tn_in)],
+                   id.vars = c("site", "year"), value.name = "inside")[!is.na(inside),
+                   .(n_in = sum(inside), n_obs = .N), by = site][, ppc_pct := 100 * n_in / n_obs]
+  site_tab[site_ppc, `:=`(ppc = sprintf("%d/%d (%s\\%%)", i.n_in, i.n_obs, fmt(i.ppc_pct, 0)),
+                          n_in = i.n_in, n_obs = i.n_obs), on = "site"]
+  p <- site_ppc$ppc_pct
+  cat(sprintf("Site PPC (TP, FP, FN and TN, per survey year): median %s%% (IQR %s--%s%%); %d sites at 100%%, %d below 50%%, %d at 0%%.\n\n",
+              fmt(median(p), 0), fmt(quantile(p, 0.25), 0), fmt(quantile(p, 0.75), 0), sum(p == 100), sum(p < 50), sum(p == 0)))
+}
+if (!"ppc" %in% names(site_tab)) site_tab[, ppc := "--"]
+site_tab[is.na(ppc), ppc := "--"]
+
+site_rows <- unlist(lapply(unique(site_tab$country), function(cn) {
+  s <- site_tab[country == cn]
+  # Country PPC: the same count summed over the country's sites
+  cty_ppc <- if ("n_obs" %in% names(s) && any(!is.na(s$n_obs))) {
+    k <- sum(s$n_in, na.rm = TRUE); n <- sum(s$n_obs, na.rm = TRUE)
+    sprintf("\\textbf{%d/%d (%s\\%%)}", k, n, fmt(100 * k / n, 0))
+  } else "--"
+  c(tab_bold_group(sprintf("\\textbf{%s} (%d sites)", cn, nrow(s)), 5, span = 3, rest = c(cty_ppc, "")),
+    sprintf("\\quad %s & %s & %s & %s & %s \\\\", tex_escape(s$name_1), s$eir, s$halflife, s$ppc, s$flag),
+    if (cn != tail(unique(site_tab$country), 1)) "\\addlinespace")
+}))
+tab_sites <- tex_long_table(
+  "l c c c l",
+  "\\textbf{Site} & \\textbf{EIR} & \\textbf{Half-life (days)} & \\textbf{PPC} & \\textbf{Flag} \\\\",
+  site_rows,
+  sprintf("Site-level posterior median (95\\%% CrI) EIR and HRP2 half-life, RDT sensitivity %d\\%%. Half-lives in red have a posterior median outside the 95\\%% predictive interval for an unobserved site (%s--%s days). PPC = posterior predictive coverage: of the site's observed shares of children tested by both RDT and LM who were TP (RDT+/LM+), FP (RDT+/LM-), FN (RDT-/LM+) and TN (RDT-/LM-) in each MIS survey year (four per survey year), the number inside their 95\\%% posterior predictive interval; country rows (bold) sum over the country's sites. Flag: E = poor emulator fit (leave-one-out RMSE above %s log-likelihood units over grid points within %d units of the site's peak); C = poor convergence ($\\hat{R} > 1.01$ or bulk or tail ESS $<$ 400).",
+          round(100 * SE), fmt(new_q[[2]]), fmt(new_q[[3]]), fmt(EMU_FLAG_RMSE, 0), NEAR_PEAK_TEXT),
+  sprintf("tab:site_posteriors_%s", rdt_sensitivity_tag(SE)))
+cat(sprintf("%d sites in %d countries; %d flagged for the emulator, %d for convergence; %d half-lives outside the unobserved-site interval (%s--%s days). Needs \\usepackage{longtable, booktabs, xcolor}.\n\n",
+            nrow(site_tab), uniqueN(site_tab$country), sum(site_tab$site %in% poor_emulator), sum(site_tab$site %in% flagged),
+            site_tab[halflife_med < new_q[[2]] | halflife_med > new_q[[3]], .N], fmt(new_q[[2]]), fmt(new_q[[3]])))
+cat("```latex\n", paste(tab_sites, collapse = "\n"), "\n```\n", sep = "")
+```
+
+# Table: emulator-flagged sites
+
+```{r table-emulator-flags, results = "asis"}
+# Sites flagged in step 3b (identify_poor_loo_sites()): leave-one-out RMSE
+# within NEAR_PEAK_TEXT = 3 log-likelihood units of the peak above
+# EMU_FLAG_RMSE (emulator-near-peak chunk). Hold-out columns come from the
+# refit validation step 3b runs on the flagged sites only (20% of grid points
+# held out); its near-peak RMSE uses the same 3-unit window, so sites with no
+# held-out point that close to the peak show "--".
+if (length(poor_emulator) == 0) {
+  cat("No emulator-flagged sites for this fit -- no table written.\n")
+} else {
+  site_max <- ll$by_name1_grid_point[, .(ll_max = max(log_lik)), by = .(site = paste(iso, name_1, sep = "_"))]
+  ho_near <- merge(emu_val$val$detail, site_max, by = "site")[ll_true >= ll_max - NEAR_PEAK_TEXT,
+               .(ho_rmse_near = sqrt(mean(error^2))), by = site]
+  emu_flags <- merge(emu_val$loo[site %in% poor_emulator],
+                     emu_val$val$summary[, .(site, ho_rmse = rmse)], by = "site", all.x = TRUE)
+  emu_flags <- merge(emu_flags, ho_near, by = "site", all.x = TRUE)
+  emu_flags[, `:=`(iso = sub("_.*", "", site), name_1 = sub("^[A-Z]{3}_", "", site))]
+  emu_flags[, country := COUNTRY[iso]][, country_sort := gsub("\\^", "", country, fixed = TRUE)]
+  setorder(emu_flags, country_sort, name_1)
+
+  na_fmt <- function(x, d) ifelse(is.na(x), "--", fmt(x, d))
+  emu_rows <- unlist(lapply(unique(emu_flags$country), function(cn) {
+    s <- emu_flags[country == cn]
+    c(tab_bold_group(sprintf("\\textbf{%s} (%d of %d sites)", cn, nrow(s), site_tab[country == cn, .N]), 6),
+      sprintf("\\quad %s & %s & %d & %s & %s & %s \\\\", tex_escape(s$name_1),
+              fmt(s$rmse_near, 2), s$n_near, fmt(s$rmse, 2),
+              na_fmt(s$ho_rmse_near, 2), na_fmt(s$ho_rmse, 2)),
+      if (cn != tail(unique(emu_flags$country), 1)) "\\addlinespace")
+  }))
+  # Two-line headers (\makecell) keep the six columns inside the text width
+  tab_emu <- tex_long_table(
+    "l c c c c c",
+    c(" & \\multicolumn{3}{c}{\\textbf{Leave-one-out}} & \\multicolumn{2}{c}{\\textbf{Hold-out refit}} \\\\",
+      "\\cmidrule(lr){2-4} \\cmidrule(l){5-6}",
+      "\\textbf{Site} & \\textbf{\\makecell{RMSE\\\\near peak}} & \\textbf{\\makecell{Points\\\\near peak}} & \\textbf{RMSE} & \\textbf{\\makecell{RMSE\\\\near peak}} & \\textbf{RMSE} \\\\"),
+    emu_rows,
+    sprintf("Sites flagged for poor emulator performance, RDT sensitivity %d\\%% (%d of %d sites). A site was flagged when its leave-one-out RMSE over grid points within %d log-likelihood units of its best grid point (near peak) exceeded %s log-likelihood units (median across all sites %s). RMSE without qualification is over the whole grid. Flagged sites were refitted with 20\\%% of grid points held out; -- = no held-out point near the peak. RMSE is in log-likelihood units.",
+            round(100 * SE), nrow(emu_flags), nrow(emu_val$loo), NEAR_PEAK_TEXT, fmt(EMU_FLAG_RMSE, 0),
+            fmt(median(emu_val$loo$rmse_near), 2)),
+    sprintf("tab:emulator_flags_%s", rdt_sensitivity_tag(SE)))
+  cat(sprintf("%d sites flagged (near-peak LOO RMSE > %s): %s.\n\n", nrow(emu_flags), fmt(EMU_FLAG_RMSE, 0),
+              paste(emu_flags$site, collapse = ", ")))
+  cat("```latex\n", paste(tab_emu, collapse = "\n"), "\n```\n", sep = "")
+}
+```
+
+# MCMC fitting summary
+
+```{r mcmc-fits}
+# ---- Diagnostics for every MCMC fit (main, RDT sensitivity, sigma_d prior SD)
+# Per fit: sampler settings, R-hat / bulk and tail ESS for the population and
+# site parameters, acceptance rates, decay-EIR posterior correlation, and the
+# population half-life and sigma_d posteriors. Reads each fit's chains, so cached.
+q3 <- function(x) quantile(x, c(0.5, 0.025, 0.975))
+mcmc_fit_summary <- function(rdt_se, sd) {
+  dir <- mcmc_variant_dir(rdt_se, sd)
+  if (!file.exists(file.path(dir, "mcmc_combined.RDS"))) return(NULL)
+  m  <- readRDS(file.path(dir, "mcmc_combined.RDS"))
+  ch <- m$chains
+  keep <- grep("^(mu_d|sigma_d|log_d_[0-9]+|log_eir_[0-9]+)$", names(ch[[1]]$samples), value = TRUE)
+  arr <- array(NA_real_, c(nrow(ch[[1]]$samples), length(ch), length(keep)), dimnames = list(NULL, NULL, keep))
+  for (k in seq_along(ch)) arr[, k, ] <- as.matrix(as.data.frame(ch[[k]]$samples)[, keep])
+  cv <- as.data.table(posterior::summarise_draws(posterior::as_draws_array(arr), "rhat", "ess_bulk", "ess_tail"))
+  pop <- cv[variable %in% c("mu_d", "sigma_d")]; st <- cv[!variable %in% c("mu_d", "sigma_d")]
+  acc <- rbindlist(lapply(ch, function(c) data.table(mu = c$accept_rates$mu_d, sd = c$accept_rates$sigma_d,
+                                                     decay = list(c$accept_rates$decay), eir = list(c$accept_rates$eir))))
+  ps <- m$pooled_samples; n <- length(ch[[1]]$site_names)
+  r  <- vapply(seq_len(n), function(i) cor(ps[[paste0("log_d_", i)]], ps[[paste0("log_eir_", i)]]), 0)
+  list(
+    rdt_sensitivity = rdt_se, sigma_d_prior_sd = sd,
+    n_chains = length(ch), n_warmup = ch[[1]]$n_warmup, n_iter = ch[[1]]$n_iter, thin = ch[[1]]$thin,
+    n_draws = nrow(ps), n_sites = n,
+    max_rhat_pop = max(pop$rhat), min_ess_bulk_pop = min(pop$ess_bulk), min_ess_tail_pop = min(pop$ess_tail),
+    max_rhat_site = max(st$rhat), min_ess_bulk_site = min(st$ess_bulk), min_ess_tail_site = min(st$ess_tail),
+    n_site_pars = nrow(st), n_site_fail = st[rhat > 1.01 | ess_bulk < 400 | ess_tail < 400, .N],
+    acc_mu = range(acc$mu), acc_sigma = range(acc$sd),
+    acc_decay = unlist(acc$decay), acc_eir = unlist(acc$eir),
+    cor_abs = abs(r),
+    halflife = q3(ps$mu_d_natural * log(2)), sigma_d = q3(ps$sigma_d))
+}
+FIT_GRID <- mcmc_variants()
+mcmc_fits <- Filter(Negate(is.null), lapply(seq_len(nrow(FIT_GRID)), function(i)
+  mcmc_fit_summary(FIT_GRID$rdt_sensitivity[i], FIT_GRID$sigma_d_prior_sd[i])))
+```
+
+```{r mcmc-summary, results = "asis"}
+fit_label <- function(f) sprintf("RDT %d\\%%, $\\sigma_d$ prior SD %s%s", round(100 * f$rdt_sensitivity), format(f$sigma_d_prior_sd),
+                                 if (is_main_rdt_sensitivity(f$rdt_sensitivity) && is_main_sigma_sd(f$sigma_d_prior_sd)) " (main)" else "")
+main <- Filter(function(f) is_main_rdt_sensitivity(f$rdt_sensitivity) && is_main_sigma_sd(f$sigma_d_prior_sd), mcmc_fits)[[1]]
+all_max_rhat <- max(vapply(mcmc_fits, function(f) max(f$max_rhat_pop, f$max_rhat_site), 0))
+all_min_ess  <- min(vapply(mcmc_fits, function(f) min(f$min_ess_bulk_pop, f$min_ess_bulk_site), 0))
+all_min_esst <- min(vapply(mcmc_fits, function(f) min(f$min_ess_tail_pop, f$min_ess_tail_site), 0))
+all_fail     <- sum(vapply(mcmc_fits, `[[`, 0, "n_site_fail"))
+loose <- Filter(function(f) !is_main_sigma_sd(f$sigma_d_prior_sd), mcmc_fits)
+
+mcmc_txt <- sprintf(paste0(
+  "We ran %d chains per fit, each with %s warm-up and %s retained iterations (no thinning), giving %s posterior draws. ",
+  "All %d fits converged: across population and site parameters, the maximum $\\hat{R}$ was %s and the minimum bulk and tail ESS were %s and %s, ",
+  "and %d of %s site parameters failed $\\hat{R} \\leq 1.01$ or ESS $\\geq$ 400. ",
+  "In the main fit, acceptance rates were %s--%s for $\\mu_d$, %s--%s for $\\sigma_d$, median %s (range %s--%s) for site decay and median %s (range %s--%s) for site EIR. ",
+  "Within sites, the posterior correlation between log decay and log EIR had median $|r|$ %s (IQR %s--%s); %d of %d sites exceeded 0.5 and %d exceeded 0.8. ",
+  "The population half-life was robust to the $\\sigma_d$ prior (%s days in the main fit; %s), but $\\sigma_d$ was not (%s in the main fit; %s), ",
+  "so the between-site spread in the main analysis is largely set by its prior."),
+  main$n_chains, int(main$n_warmup), int(main$n_iter), int(main$n_draws),
+  length(mcmc_fits), fmt(all_max_rhat, 3), int(round(all_min_ess)), int(round(all_min_esst)),
+  all_fail, int(sum(vapply(mcmc_fits, `[[`, 0, "n_site_pars"))),
+  fmt(main$acc_mu[1], 2), fmt(main$acc_mu[2], 2), fmt(main$acc_sigma[1], 2), fmt(main$acc_sigma[2], 2),
+  fmt(median(main$acc_decay), 2), fmt(min(main$acc_decay), 2), fmt(max(main$acc_decay), 2),
+  fmt(median(main$acc_eir), 2), fmt(min(main$acc_eir), 2), fmt(max(main$acc_eir), 2),
+  fmt(median(main$cor_abs), 2), fmt(quantile(main$cor_abs, 0.25), 2), fmt(quantile(main$cor_abs, 0.75), 2),
+  sum(main$cor_abs > 0.5), main$n_sites, sum(main$cor_abs > 0.8),
+  ci(main$halflife[1], main$halflife[2], main$halflife[3], 1),
+  paste(vapply(loose, function(f) sprintf("%s with prior SD %s", ci(f$halflife[1], f$halflife[2], f$halflife[3], 1), format(f$sigma_d_prior_sd)), ""), collapse = " and "),
+  ci(main$sigma_d[1], main$sigma_d[2], main$sigma_d[3], 2),
+  paste(vapply(loose, function(f) sprintf("%s with prior SD %s", ci(f$sigma_d[1], f$sigma_d[2], f$sigma_d[3], 2), format(f$sigma_d_prior_sd)), ""), collapse = " and "))
+cat("```latex\n", mcmc_txt, "\n```\n\n", sep = "")
+
+# Supplementary table: one row per fit. Half-life and sigma_P posteriors per
+# fit are already in tab:post and tab:sigma_variance, so this table holds the
+# convergence diagnostics only (keeps it inside the page width).
+tab_mcmc <- tex_float_table(
+  "l l c c c c c",
+  c(" & & \\multicolumn{2}{c}{\\textbf{Population}} & \\multicolumn{3}{c}{\\textbf{Site}} \\\\",
+    "\\cmidrule(lr){3-4} \\cmidrule(l){5-7}",
+    "\\textbf{\\makecell[l]{RDT\\\\sensitivity}} & \\textbf{\\makecell[l]{$\\sigma_P$\\\\prior SD}} & \\textbf{Max $\\hat{R}$} & \\textbf{\\makecell{Min ESS\\\\(bulk / tail)}} & \\textbf{Max $\\hat{R}$} & \\textbf{\\makecell{Min ESS\\\\(bulk / tail)}} & \\textbf{Failing} \\\\"),
+  vapply(mcmc_fits, function(f) sprintf("%d\\%% & %s%s & %s & %s / %s & %s & %s / %s & %d / %s \\\\",
+    round(100 * f$rdt_sensitivity), formatC(f$sigma_d_prior_sd, format = "f", digits = 2),
+    if (is_main_rdt_sensitivity(f$rdt_sensitivity) && is_main_sigma_sd(f$sigma_d_prior_sd)) " (main)" else "",
+    fmt(f$max_rhat_pop, 3), int(round(f$min_ess_bulk_pop)), int(round(f$min_ess_tail_pop)),
+    fmt(f$max_rhat_site, 3), int(round(f$min_ess_bulk_site)), int(round(f$min_ess_tail_site)),
+    f$n_site_fail, int(f$n_site_pars)), ""),
+  sprintf("Convergence diagnostics for each MCMC fit (%d chains, each with %s warm-up and %s retained iterations). ESS = effective sample size. Failing = site parameters with $\\hat{R} > 1.01$ or bulk or tail ESS $<$ 400.",
+          main$n_chains, int(main$n_warmup), int(main$n_iter)),
+  "tab:mcmc_diagnostics")
+cat("```latex\n", paste(tab_mcmc, collapse = "\n"), "\n```\n", sep = "")
+```
+
+# Supporting numbers
+
+```{r supporting}
+knitr::kable(slopes[, .(country, rdt_lm_slope = round(slope, 2))], caption = "RDT/LM slope through the origin, by country")
+knitr::kable(country_hl[order(halflife_median), .(country = country_name, halflife_median = round(halflife_median, 1),
+                                                  q025 = round(halflife_q025, 1), q975 = round(halflife_q975, 1))],
+             caption = sprintf("Country half-life (sites weighted by %s)", params$agg_weights))
+if (nrow(outside)) knitr::kable(outside[order(-halflife_median), .(country, site = sub("^[A-Z]{3}_", "", site),
+                                  halflife_median = round(halflife_median, 1), q025 = round(halflife_q025, 1),
+                                  q975 = round(halflife_q975, 1), side)],
+                                caption = sprintf("Sites with a median half-life outside the unobserved-site 95%% predictive interval (%s-%s days), highest to lowest",
+                                                  fmt(new_q[2]), fmt(new_q[3])))
+if (length(flagged)) knitr::kable(site_conv[site %in% flagged][order(site, variable),
+                                  .(site, variable, rhat = round(rhat, 3), ess_bulk = round(ess_bulk), ess_tail = round(ess_tail))],
+                                  caption = "Flagged sites (Rhat > 1.01, bulk or tail ESS < 400)")
+if (!is.null(ppc)) knitr::kable(ppc$by_country[, c("country", names(ppc$cells)), with = FALSE], digits = 0,
+                                caption = "Posterior predictive coverage by country (%)")
+if (!is.null(ppc$marg_cty)) knitr::kable(ppc$marg_kn[ppc$marg_cty[, .(iso, d = rdtj - rdtwu)], on = "iso"][order(-d), .(country, `RDT (this model)` = rdtj, `RDT (Wu et al.)` = rdtwu, `LM (this model)` = lmj)],
+                                         caption = sprintf("Marginal posterior predictive coverage by country, survey-years inside the 95%% interval / survey-years compared: our model vs Wu et al. on the same LM draws (overall RDT %s%%, LM %s%%, Wu RDT %s%%)",
+                                                           fmt(ppc$marg_all[["rdtj"]]), fmt(ppc$marg_all[["lmj"]]), fmt(ppc$marg_all[["rdtwu"]])))
+```
+
+# Guidance figure: RDT interpretation (the manuscript's figures/nmcp_guidance.tex)
+
+FDR = P(microscopy- | RDT+) for febrile children, from the step 2 regression (population-level predictions, `re_formula = NA`). Every figure number is standardised over the febrile children in the regression data: each child keeps their own prevalence, timing and other covariates unless the number fixes them, and FDR is the ratio of summed probabilities, $\sum P(\mathrm{LM-}, \mathrm{RDT+}) / \sum P(\mathrm{RDT+})$, within each posterior draw, so it is the share of febrile RDT-positive children who are microscopy-negative. Ranges are the lowest to highest posterior mean across the 2 SMC $\times$ 3 *pfhrp2* deletion-risk strata. Ages: 12 and 59 months (59, not 60, keeps the older age inside the survey range of 6-59 months).
+
+```{r nmcp-figure, results = "asis"}
+# Febrile children the regression was fitted to, collapsed to unique covariate
+# rows with counts so each posterior_epred() call is small (predictions
+# ignore survid with re_formula = NA, so rows that share covariates are
+# identical).
+FIG_AGES <- c(young = 12, old = 59)   # months; "Age 1 year" and "Age 5 years" in the figure
+FIG_VARS <- c("sr_rdt_cat", "hrp2_risk", "has_smc", "during_or_after_peak", "care_or_act", "fever", "age_c")
+feb <- as.data.table(reg_fit$data)[fever == 1, ..FIG_VARS]
+age_mean <- mean(reg_data$age_months)   # centring used when the model was fitted (prepare_brms_full_data())
+
+# Standardised FDR draws: set the `fix` covariates for every febrile child,
+# keep everything else as observed, then sum probabilities within each draw.
+fdr_std <- function(fix = list()) {
+  d <- copy(feb)
+  for (v in names(fix)) {
+    val <- fix[[v]]
+    if (is.factor(d[[v]])) val <- factor(val, levels = levels(d[[v]]))
+    set(d, j = v, value = val)
+  }
+  d <- d[, .(n = .N), by = FIG_VARS]
+  d[, survid := reg_fit$data$survid[1]]   # ignored: re_formula = NA
+  ep <- brms::posterior_epred(reg_fit, newdata = d, re_formula = NA)
+  w  <- d$n
+  np <- ep[, , "n_p", drop = FALSE][, , 1, drop = TRUE]; pp <- ep[, , "p_p", drop = FALSE][, , 1, drop = TRUE]
+  if (is.null(dim(np))) { np <- matrix(np, ncol = 1); pp <- matrix(pp, ncol = 1) }
+  100 * as.vector((np %*% w) / ((np + pp) %*% w))
+}
+q_fdr <- function(x) c(mean = mean(x), lo = quantile(x, 0.025, names = FALSE), hi = quantile(x, 0.975, names = FALSE))
+
+# SMC x deletion-risk strata
+hrp2_lv <- levels(reg_fit$data$hrp2_risk)
+strata  <- CJ(has_smc = c(0L, 1L), hrp2_risk = hrp2_lv, sorted = FALSE)
+pct_rng <- function(x) sprintf("%s--%s\\%%", fmt(min(x), 0), fmt(max(x), 0))
+
+# 1. Headline: all febrile children as observed, plus the SMC x deletion-risk range
+fig_all <- q_fdr(fdr_std())
+fig_strata <- rbindlist(lapply(seq_len(nrow(strata)), function(i)
+  as.list(c(strata[i], q_fdr(fdr_std(list(has_smc = strata$has_smc[i], hrp2_risk = strata$hrp2_risk[i])))))))
+
+# 2. Clinician table: care x age, each cell ranged over the six strata
+fig_cells <- rbindlist(lapply(c(0L, 1L), function(care) rbindlist(lapply(names(FIG_AGES), function(a) {
+  rbindlist(lapply(seq_len(nrow(strata)), function(i) {
+    r <- q_fdr(fdr_std(list(care_or_act = care, age_c = FIG_AGES[[a]] - age_mean,
+                            has_smc = strata$has_smc[i], hrp2_risk = strata$hrp2_risk[i])))
+    data.table(care = care, age = a, has_smc = strata$has_smc[i], hrp2_risk = strata$hrp2_risk[i],
+               mean = r[["mean"]], lo = r[["lo"]], hi = r[["hi"]])
+  }))
+}))))
+fig_tab <- fig_cells[, .(min = min(mean), max = max(mean)), by = .(care, age)]
+# Bold where even the lowest stratum has at least half of RDT+ children
+# microscopy-negative ("recent infection at least as likely as current")
+fig_tab[, rng := sprintf("%s--%s\\%%", fmt(min, 0), fmt(max, 0))]   # row-wise (pct_rng() collapses a vector)
+fig_tab[, cell := fifelse(round(min) >= 50, sprintf("\\textbf{%s}", rng), rng)]
+fig_crihw <- median(c((fig_cells$hi - fig_cells$lo) / 2, (fig_strata$hi - fig_strata$lo) / 2))
+
+# ---- Keys for the figure (cited with \nm{} in nmcp_guidance.tex) ----------
+num("fig.fdr.fever.mean", fig_all[["mean"]], 0)
+num("fig.fdr.fever.lo", fig_all[["lo"]], 0); num("fig.fdr.fever.hi", fig_all[["hi"]], 0)
+num("fig.fdr.fever.rng", pct_rng(fig_strata$mean))
+for (i in seq_len(nrow(fig_tab))) {
+  r <- fig_tab[i]; k <- sprintf("fig.fdr.care%d.%s", r$care, r$age)
+  num(paste0(k, ".rng"), r$rng); num(paste0(k, ".cell"), r$cell)
+  # Share of RDT+ estimated to be current infection (100 - FDR), for the
+  # clinician table: "Share ... estimated to reflect current infection".
+  num(sprintf("fig.ppv.care%d.%s.rng", r$care, r$age),
+      sprintf("%s--%s\\%%", fmt(100 - r$max, 0), fmt(100 - r$min, 0)))
+}
+num("fig.fdr.crihw", fig_crihw, 0)
+num_int("fig.age.young.months", FIG_AGES[["young"]]); num_int("fig.age.old.months", FIG_AGES[["old"]])
+if (any(fig_tab[care == 1, round(min) < 50]) || any(fig_tab[care == 0, round(min) >= 50]))
+  note("Guidance figure: bolding no longer follows care (bold = every stratum >= 50%%); check the callout wording.")
+
+cat(sprintf("Febrile children: %s (%s unique covariate rows). Headline FDR %s%% (95%% CrI %s--%s%%), range across SMC x deletion-risk strata %s.\n\n",
+            int(nrow(feb)), int(nrow(unique(feb))), fmt(fig_all[["mean"]], 0), fmt(fig_all[["lo"]], 0), fmt(fig_all[["hi"]], 0),
+            gsub("\\\\", "", pct_rng(fig_strata$mean))))
+print(knitr::kable(fig_strata[, .(SMC = has_smc, `Deletion risk` = hrp2_risk, `FDR %` = round(mean, 1), lo = round(lo, 1), hi = round(hi, 1))],
+                   caption = "Headline FDR by stratum (febrile children)"))
+print(knitr::kable(dcast(fig_tab[, .(Care = fifelse(care == 1, "Care in past 2 weeks", "No care"),
+                                     age = sprintf("%d months", FIG_AGES[age]), cell = gsub("\\\\textbf\\{|\\}|\\\\", "", cell))],
+                         Care ~ age, value.var = "cell"), caption = "Clinician table (bold in figure when every stratum >= 50%)"))
+cat(sprintf("\nMedian 95%% CrI half-width: %s percentage points.\n", fmt(fig_crihw, 1)))
+```
+
+# Numbers file for Overleaf
+
+All numbers and tables above, keyed for `\nm{key}` in the manuscript, written to one file: `results/numbers.tex`. Keys are `<section>.<quantity>[.<variant>].<stat>`; intervals give `.med`, `.lo`, `.hi`, `.ci` ("m (lo--hi)") and, for the regression, `.pci` ("m\% (lo--hi)"). Variant tags: `se080`/`se090`/`se100` (RDT sensitivity), `sd001`/`sd005`/`sd010` ($\sigma_d$ prior SD). Unsuffixed keys are the main fit (RDT sensitivity `r SE`, prior SD `r SIGMA_D_PRIOR_SD_MAIN`).
+
+```{r numbers, results = "asis"}
+# NUMBERS is created fresh when numbers_fns.R is sourced (load chunk); the
+# nmcp-figure chunk above has already added the fig.* keys.
+prev_key <- function(x) ifelse(grepl("^<", x), "lo", ifelse(grepl("^>", x), "hi", "mid"))
+
+# ---- Data stream ----------------------------------------------------------
+num_int("data.paired.surveys", N_paired_surveys); num_int("data.paired.countries", N_paired_countries)
+num_int("data.reg.surveys", N_reg_surveys);       num_int("data.reg.countries", N_reg_countries)
+# Years as plain integers: num_int() adds a thousands separator ("2,024")
+num("data.reg.year.start", sprintf("%d", as.integer(reg_years[1]))); num("data.reg.year.end", sprintf("%d", as.integer(reg_years[2])))
+num_int("data.reg.countries.esa", n_reg_countries_region("ESA"))
+num_int("data.reg.countries.wca", n_reg_countries_region("WCA"))
+num_int("data.reg.indiv", N_reg_individuals)
+
+# ---- Regression (percentage points) ---------------------------------------
+num("reg.fpr.prevhi.rng", rng(fpr_prev_hi$diff_mean)); num("reg.fpr.prevmid.rng", rng(fpr_prev_mid$diff_mean))
+# High vs slight deletion risk, by prevalence level, as a reduction (sign flipped)
+for (i in seq_len(nrow(fpr_high_del))) {
+  r <- fpr_high_del[i]; lv <- prev_key(gsub(".*prevalence: ([^)]*)\\).*", "\\1", r$covariate))
+  num_ci(sprintf("reg.fpr.highdel.%s", lv), -r$diff_mean, -r$diff_hi, -r$diff_lo, d = 2, pct = TRUE)
+}
+num_int("reg.fpr.highdel.nsig", nrow(fpr_high_sig))
+bin_key <- c(Fever = "fever", SMC = "smc", Care = "care", Timing = "timing", Age = "age")
+for (k in names(bin_key)) {
+  r <- bin_fpr[key == k]; num_ci(sprintf("reg.fpr.%s", bin_key[[k]]), r$diff_mean, r$diff_lo, r$diff_hi, d = 2, pct = TRUE)
+  # FDR effects as magnitudes; the text says whether each raised or lowered the FDR
+  r <- bin_fdr[key == k]; a <- abs(c(r$diff_lo, r$diff_hi))
+  num_ci(sprintf("reg.fdr.%s", bin_key[[k]]), abs(r$diff_mean), min(a), max(a), d = 2, pct = TRUE)
+}
+num("reg.fpr.bin.ordered", bin_txt)   # "fever (4.40\% (...)), care receipt (...), ..." largest first
+for (x in list(list("reg.fpr.min", fpr_min), list("reg.fpr.max", fpr_max),
+               list("reg.fdr.min", fdr_min), list("reg.fdr.max", fdr_max))) {
+  num_ci(x[[1]], x[[2]]$p_mean, x[[2]]$p_lo, x[[2]]$p_hi, d = 2, pct = TRUE)
+  num(paste0(x[[1]], ".lab"), grid_lab(x[[2]]))
+}
+num("reg.fdr.highdel.rng", rng(fdr_high_del$diff_mean))
+num_int("reg.fdr.highdel.nsig", sum(sig(fdr_high_del))); num_int("reg.fdr.meddel.nsig", sum(sig(fdr_med_del)))
+
+# Average marginal effects (fpfn_ame.RDS; method in results/ame_method.txt), in
+# percentage points, as magnitudes like the FDR keys above: the text says
+# whether each raised or lowered the rate. .ci only ("m (lo--hi)"), no \%.
+for (i in seq_len(nrow(ame))) {
+  r <- ame[i]; a <- abs(c(r$lo, r$hi))
+  num_ci(sprintf("reg.ame.%s.%s", r$out_key, ame_key[[r$covariate]]), abs(r$mean),
+         if (r$lo < 0 && r$hi > 0) -min(a) else min(a), max(a), d = 1)
+  num(sprintf("reg.ame.%s.%s.dir", r$out_key, ame_key[[r$covariate]]), if (r$mean > 0) "increased" else "decreased")
+}
+num("reg.ame.fpr.bin.ordered", ame_bin_list(key = FALSE))
+# Country maps (most recent survey; src/plots.R PLOT_FPR_FDR_MAPS): per country
+# reg.map.<country>.{year, rdtprev, rdtcat, fpr.mean/min/max, fdr.mean/min/max},
+# <country> = lower-case letters only (e.g. cotedivoire); and the sub-regions
+# with the lowest and highest modelled FPR/FDR across all maps,
+# reg.map.<fpr|fdr>.<min|max>.{ci, region, country, year}.
+for (i in seq_len(nrow(map_nat))) {
+  r <- map_nat[i]; k <- paste0("reg.map.", r$key)
+  num(paste0(k, ".year"), sprintf("%d", as.integer(r$survey_year)))
+  num(paste0(k, ".rdtprev"), r$rdt_prev)
+  num(paste0(k, ".rdtcat"), r$rdt_cat)
+  for (v in c("fpr_mean", "fpr_min", "fpr_max", "fdr_mean", "fdr_min", "fdr_max"))
+    num(paste0(k, ".", sub("_", ".", v)), r[[v]])
+}
+for (o in c("fpr", "fdr")) for (s in c("min", "max")) {
+  r <- map_ext[[o]][[s]]; k <- sprintf("reg.map.%s.%s", o, s)
+  num_ci(k, r[[o]], r[[paste0(o, "_lo")]], r[[paste0(o, "_hi")]], d = map_d(r[[o]]), pct = TRUE)
+  num(paste0(k, ".region"), r$sub_region); num(paste0(k, ".country"), r$country)
+  num(paste0(k, ".year"), sprintf("%d", as.integer(r$survey_year)))
+}
+
+if (!identical(unname(ame_key[ame_bin$covariate]), c("fever", "smc", "care", "age", "timing")))
+  note("FPR AME order is now %s; reorder the manuscript list or use \\nm{reg.ame.fpr.bin.ordered}.",
+       paste(ame_key[ame_bin$covariate], collapse = ", "))
+
+# Wording in the manuscript that depends on these results
+if (nrow(fpr_high_sig) != 1 || prev_key(gsub(".*prevalence: ([^)]*)\\).*", "\\1", fpr_high_sig$covariate[1])) != "hi")
+  note("Manuscript says the only significant FPR reduction from high deletion risk is at >20%% prevalence; this has changed.")
+if (!identical(bin_fpr$key, c("Fever", "Care", "SMC", "Timing", "Age")))
+  note("FPR binary-effect order is now %s; reorder the manuscript list or use \\nm{reg.fpr.bin.ordered}.", paste(bin_fpr$key, collapse = ", "))
+if (any(sig(fdr_med_del))) note("Medium deletion risk now significantly changes the FDR; manuscript says it does not.")
+if (bin_fdr[key == "SMC", diff_mean] < 0) note("SMC now decreases the FDR; manuscript says it increases it.")
+
+# ---- Calibration data and emulator ----------------------------------------
+num_int("cal.countries", N_cal_countries); num_int("cal.surveys", N_cal_surveys)
+num("cal.year.start", sprintf("%d", as.integer(cal_years[1]))); num("cal.year.end", sprintf("%d", as.integer(cal_years[2])))
+num_int("cal.sites", N_sites)
+num_int("cal.deletion.countries", N_deletion_from_review)
+num("cal.deletion.countries.word", num_word(N_deletion_from_review, cap = TRUE))   # opens a sentence
+num("cal.ratio.med", median(ratio)); num("cal.ratio.q25", quantile(ratio, 0.25)); num("cal.ratio.q75", quantile(ratio, 0.75))
+num("cal.ratio.max.country", slopes$country[1]); num("cal.ratio.max", slopes$slope[1])
+num_int("cal.ratio.below1.n", nrow(below1))
+num("cal.ratio.below1.countries", if (nrow(below1)) and_list(below1$country) else "none")
+num("cal.ratio.below1.values", if (nrow(below1)) and_list(fmt(below1$slope, 1)) else "none")
+
+num_int("emu.window", NEAR_PEAK_TEXT); num("emu.flag.rmse", EMU_FLAG_RMSE, d = 0)
+num_int("emu.good.n", nrow(np_good))
+num("emu.good.rmse.med", median(np_good$rmse), 2)
+num("emu.good.rmse.q25", quantile(np_good$rmse, 0.25), 2); num("emu.good.rmse.q75", quantile(np_good$rmse, 0.75), 2)
+for (i in EMU_POOR_ISO) {
+  x <- near_peak[iso == i, rmse]; k <- tolower(i)
+  num(sprintf("emu.%s.rmse.med", k), median(x), 2)
+  num(sprintf("emu.%s.rmse.q25", k), quantile(x, 0.25), 2); num(sprintf("emu.%s.rmse.q75", k), quantile(x, 0.75), 2)
+}
+num_int("emu.poor.lmcut", lm_cut)
+
+# Emulator flagging (step 3b: identify_poor_loo_sites() and the hold-out refit
+# of flagged sites; emu_flags from the table-emulator-flags chunk)
+num_int("emu.n.sites", nrow(emu_val$loo))
+num_int("emu.flag.n", length(poor_emulator))
+x <- emu_val$loo$rmse_near[!is.na(emu_val$loo$rmse_near)]
+num("emu.loo.near.med", median(x), 2); num("emu.loo.near.q25", quantile(x, 0.25), 2); num("emu.loo.near.q75", quantile(x, 0.75), 2)
+if (length(poor_emulator) > 0) {
+  fl <- emu_flags[, .(n = .N), by = .(country, country_sort)][order(-n, country_sort)]
+  fl[, n_all := vapply(country, function(cn) site_tab[country == cn, .N], 0L)]
+  fl[, txt := fifelse(n == n_all, sprintf("all %s sites in %s", num_word(n), country),
+                      fifelse(n == 1, sprintf("%s in %s", emu_flags[country == .BY$country, name_1][1], country),
+                              sprintf("%s of %d sites in %s", num_word(n), n_all, country))), by = country]
+  num("emu.flag.list", and_list(fl$txt))   # "all five sites in Rwanda, four of 14 sites in Senegal, and Nord in Burkina Faso"
+  hn <- emu_flags[!is.na(ho_rmse_near)]
+  num_int("emu.ho.near.n", nrow(hn)); num_int("emu.ho.nonear.n", emu_flags[is.na(ho_rmse_near), .N])
+  if (nrow(hn)) { num("emu.ho.near.min", min(hn$ho_rmse_near), 2); num("emu.ho.near.max", max(hn$ho_rmse_near), 2) }
+  num("emu.ho.rmse.min", min(emu_flags$ho_rmse, na.rm = TRUE), 2); num("emu.ho.rmse.max", max(emu_flags$ho_rmse, na.rm = TRUE), 2)
+}
+
+# ---- Population posterior (main fit), priors and sensitivity fits ---------
+num_ci("post.hl", mu_hl$median, mu_hl$q025, mu_hl$q975, d = 1)
+num_ci("post.sigma", median(sig_d), quantile(sig_d, 0.025), quantile(sig_d, 0.975), d = 2)
+num_q3("post.newsite", new_q, d = 1)
+num_ci("post.eir", median(eir_med), quantile(eir_med, 0.025), quantile(eir_med, 0.975), d = 1)
+num("post.eir.med2", median(eir_med), 2)   # the text gives the median EIR to 2 dp
+num_int("post.rdtse", round(100 * SE))
+num_q3("prior.hl", pr_mu, 2); num_q3("prior.sigma", pr_sd, 2); num_q3("prior.eir", pr_eir, 2)
+for (i in seq_along(RDT_SENSITIVITY_OPTIONS)) {
+  tg <- se_key(RDT_SENSITIVITY_OPTIONS[i]); p <- se_post[[i]]
+  num_q3(sprintf("post.hl.%s", tg), p$mu, 1); num_q3(sprintf("post.sigma.%s", tg), p$sd, 2); num_q3(sprintf("post.eir.%s", tg), p$eir, 2)
+}
+num_int("post.rdtse.min", round(100 * min(RDT_SENSITIVITY_OPTIONS))); num_int("post.rdtse.max", round(100 * max(RDT_SENSITIVITY_OPTIONS)))
+for (i in seq_along(SIGMA_SDS)) {
+  tg <- sd_key(SIGMA_SDS[i]); f <- sig_fit[[i]]
+  num(sprintf("prior.sd.%s", tg), format(SIGMA_SDS[i]))
+  num_q3(sprintf("post.hl.%s", tg), f$mu, 1); num_q3(sprintf("post.sigma.%s", tg), f$sd, 2)
+  num_q3(sprintf("post.newsite.%s", tg), f$new, 1)
+  num(sprintf("site.out.%s", tg), sprintf("%d/%d", f$n_out, f$n_site))
+}
+
+# ---- Site and country half-lives ------------------------------------------
+num("site.hl.min", hl_min$halflife_median); num("site.hl.min.site", sub("^[A-Z]{3}_", "", hl_min$site)); num("site.hl.min.country", hl_min$country)
+num("site.hl.max", hl_max$halflife_median); num("site.hl.max.site", sub("^[A-Z]{3}_", "", hl_max$site)); num("site.hl.max.country", hl_max$country)
+num_int("site.out.n", nrow(outside)); num_int("site.out.below", n_below); num_int("site.out.above", n_above)
+num("site.out.below.list", if (n_below > 0) side_list("below") else "none")   # "Mali (5/12), Burkina Faso (4/12), ..."
+num("site.out.above.list", if (n_above > 0) side_list("above") else "none")
+num_int("country.out.n", length(c_out)); num("country.out.list", if (length(c_out)) and_list(c_out) else "none")
+ch <- country_hl[order(halflife_median)]
+for (x in list(list("country.hl.min", ch[1]), list("country.hl.max", ch[.N]))) {
+  num_ci(x[[1]], x[[2]]$halflife_median, x[[2]]$halflife_q025, x[[2]]$halflife_q975, d = 1)
+  num(paste0(x[[1]], ".country"), x[[2]]$country_name)
+}
+
+# ---- Posterior predictive coverage ----------------------------------------
+if (!is.null(ppc)) {
+  for (cl in names(ppc$cells)) num(sprintf("ppc.all.%s", tolower(cl)), ppc$all[[cl]], 1)
+  for (x in list(list("ppc.worst", ppc$by_country[1]), list("ppc.best", ppc$by_country[.N]))) {
+    num(paste0(x[[1]], ".country"), x[[2]]$country)
+    for (cl in names(ppc$cells)) num(sprintf("%s.%s", x[[1]], tolower(cl)), x[[2]][[cl]], 0)
+  }
+  if (!is.null(ppc$marg_all)) {
+    num("ppc.marg.rdt", ppc$marg_all[["rdtj"]], 1); num("ppc.marg.lm", ppc$marg_all[["lmj"]], 1)
+    num("ppc.wu.rdt", ppc$marg_all[["rdtwu"]], 1)
+    # Numerators and denominators: ppc.marg.rdt.k / ppc.marg.rdt.n etc.
+    kn_keys <- c(marg.rdt = "rdtj", marg.lm = "lmj", wu.rdt = "rdtwu")
+    for (m in names(kn_keys)) {
+      num_int(sprintf("ppc.%s.k", m), ppc$marg_k[[kn_keys[[m]]]]); num_int(sprintf("ppc.%s.n", m), ppc$marg_n[[kn_keys[[m]]]])
+    }
+    # Countries where our RDT coverage is at least the Wu comparator's
+    num_int("ppc.wu.cty.better", ppc$marg_cty[rdtj >= rdtwu, .N]); num_int("ppc.wu.cty.n", nrow(ppc$marg_cty))
+    if (!is.null(ppc$wu_sd)) {
+      num("ppc.wu.sd.min", min(ppc$wu_sd$wu_sd), 2); num("ppc.wu.sd.max", max(ppc$wu_sd$wu_sd), 2)
+    }
+  }
+}
+
+# ---- MCMC diagnostics (all fits; acceptance and correlation from the main fit)
+num_int("mcmc.chains", main$n_chains); num_int("mcmc.warmup", main$n_warmup)
+num_int("mcmc.iter", main$n_iter);     num_int("mcmc.draws", main$n_draws)
+num_int("mcmc.nfits", length(mcmc_fits))
+num("mcmc.rhat.max", all_max_rhat, 3)
+num_int("mcmc.ess.bulk.min", all_min_ess); num_int("mcmc.ess.tail.min", all_min_esst)
+num_int("mcmc.fail.n", all_fail); num_int("mcmc.sitepars.n", sum(vapply(mcmc_fits, `[[`, 0, "n_site_pars")))
+num("mcmc.acc.mu.min", main$acc_mu[1], 2);    num("mcmc.acc.mu.max", main$acc_mu[2], 2)
+num("mcmc.acc.sigma.min", main$acc_sigma[1], 2); num("mcmc.acc.sigma.max", main$acc_sigma[2], 2)
+num("mcmc.acc.decay.med", median(main$acc_decay), 2)
+num("mcmc.acc.decay.min", min(main$acc_decay), 2); num("mcmc.acc.decay.max", max(main$acc_decay), 2)
+num("mcmc.acc.eir.med", median(main$acc_eir), 2)
+num("mcmc.acc.eir.min", min(main$acc_eir), 2);     num("mcmc.acc.eir.max", max(main$acc_eir), 2)
+num("mcmc.cor.med", median(main$cor_abs), 2)
+num("mcmc.cor.q25", quantile(main$cor_abs, 0.25), 2); num("mcmc.cor.q75", quantile(main$cor_abs, 0.75), 2)
+num_int("mcmc.cor.gt05", sum(main$cor_abs > 0.5)); num_int("mcmc.cor.gt08", sum(main$cor_abs > 0.8))
+
+# ---- Data stream (appendix fig:data_stream; same counts as src/plots.R) ----
+ds <- data_stream_counts(DIR_PULL, SITE_PREV_DIR, reg_fit$data, mcmc_inputs$site_names)
+num_int("data.stream.any", ds$n_any); num_int("data.stream.rdtonly", ds$n_rdt_only)
+num_int("data.stream.paired", ds$n_paired); num_int("data.stream.paired.countries", ds$n_paired_countries)
+num_int("data.stream.single", ds$n_single_surveys); num_int("data.stream.single.countries", ds$n_single_countries)
+num_int("data.stream.multi", ds$n_multi); num_int("data.stream.multi.countries", ds$n_multi_countries)
+num_int("data.stream.reg.excluded", ds$n_reg_excluded)
+num_int("data.stream.cal.excluded", ds$n_cal_excluded)
+num("data.stream.cal.excluded.countries", and_list(ds$cal_excl_countries))
+num_int("data.stream.cal.lm", ds$n_cal_lm); num_int("data.stream.cal.rdt", ds$n_cal_rdt)
+
+# Calibration countries by African region (appendix Section "Household survey data")
+cal_cty <- merge(unique(cal_obs[, .(country)]), region, by = "country", all.x = TRUE)
+num_int("data.cal.countries.esa", cal_cty[africa_region == "ESA", .N])
+num_int("data.cal.countries.wca", cal_cty[africa_region == "WCA", .N])
+
+# ---- Fixed-effect selection (appendix Table tab:elpd and the text above it) --
+# From results/table_loo_fixed_effect_selection.csv, written by
+# src/2_regression/fixed_effect_selection.R Section B.
+elpd_csv <- file.path(RESULTS_DIR, "table_loo_fixed_effect_selection.csv")
+if (file.exists(elpd_csv)) {
+  elpd <- fread(elpd_csv)
+  tex_signed <- function(x, d = 1) ifelse(round(x, d) < 0, paste0("$-$", fmt(abs(x), d)), fmt(x, d))
+  tex_comma  <- function(x) gsub(",", "{,}", x)
+  tex_label  <- function(x) {
+    x <- sub("^- ", "$-$ ", x)
+    x <- gsub("pfhrp2", "\\\\textit{pfhrp2}", x)
+    x <- gsub(" x ", " $\\\\times$ ", x)
+    sub("\\(- region, - year\\)", "($-$ region, $-$ year)", x)
+  }
+  elpd_row <- function(m) {
+    r <- elpd[model == m]
+    sprintf("%s & %s (%s) & %s \\\\", tex_label(r$label), tex_comma(tex_signed(r$elpd)), fmt(r$elpd_se),
+            if (m == "full") "0" else sprintf("%s (%s)", tex_signed(r$delta_elpd), fmt(r$delta_elpd_se)))
+  }
+  reduced <- setdiff(elpd$model, c("full", "main_model"))
+  reduced <- reduced[order(-elpd[match(reduced, model), delta_elpd])]   # smallest loss first
+  # The whole tabular, so the alignment never depends on how \nm expands
+  num_table("tab.elpd", c("\\begin{tabular}{lrr}", "\\toprule",
+                          "Model & ELPD (SE) & $\\Delta$ELPD vs full (SE) \\\\", "\\midrule",
+                          elpd_row("full"), "\\addlinespace", vapply(reduced, elpd_row, ""),
+                          "\\addlinespace", elpd_row("main_model"), "\\bottomrule", "\\end{tabular}"))
+  # "Delta ELPD -839.0, SE 40.1" for each model, cited in the text
+  for (m in setdiff(elpd$model, "full")) {
+    r <- elpd[model == m]
+    num(sprintf("elpd.%s", gsub("[^a-z0-9]", "", m)),
+        sprintf("$\\Delta$ELPD %s, SE %s", tex_signed(r$delta_elpd), fmt(r$delta_elpd_se)))
+    num(sprintf("elpd.%s.loss", gsub("[^a-z0-9]", "", m)), -r$delta_elpd, 1)
+    num(sprintf("elpd.%s.se", gsub("[^a-z0-9]", "", m)), r$delta_elpd_se, 1)
+  }
+  num("elpd.maxk", max(elpd$max_pareto_k), 2)
+} else {
+  note("No %s; run src/2_regression/fixed_effect_selection.R (COMPARE = TRUE).", elpd_csv)
+}
+
+# ---- Guidance figure (the manuscript's figures/nmcp_guidance_body.tex) ----
+# The figure's \nmfallback{res.*} defaults are replaced by these values.
+key_val <- function(k) get(k, envir = NUMBERS)
+signed  <- function(k) sprintf("$-$%s", key_val(k))   # AME magnitudes are stored unsigned; the figure shows a decrease
+num("res.ratio.median", median(ratio)); num("res.ratio.iqr", sprintf("%s--%s", fmt(quantile(ratio, 0.25)), fmt(quantile(ratio, 0.75))))
+num("res.ratio.min", min(slopes$slope)); num("res.ratio.max", max(slopes$slope))
+num_int("res.n.surveys.calib", N_cal_surveys)
+num("res.fpr.natl.mdg", key_val("reg.map.madagascar.fpr.mean")); num("res.fdr.natl.ken", key_val("reg.map.kenya.fdr.mean"))
+num("res.fdr.min", map_ext$fdr$min$fdr); num("res.fdr.max", map_ext$fdr$max$fdr)
+num_int("res.ppv.min", 100 - map_ext$fdr$max$fdr); num_int("res.ppv.max", 100 - map_ext$fdr$min$fdr)
+num("res.ame.fdr.delhigh", key_val("reg.ame.fdr.highdel.ci"))
+num("res.ame.fdr.prev2", signed("reg.ame.fdr.prevmid.med")); num("res.ame.fdr.prev3", signed("reg.ame.fdr.prevhi.med"))
+num("res.ame.fdr.smc", key_val("reg.ame.fdr.smc.ci"))
+num("res.ame.fdr.care", key_val("reg.ame.fdr.care.ci")); num("res.ame.fdr.age", key_val("reg.ame.fdr.age.ci"))
+num("res.hl.pop", key_val("post.hl.ci")); num("res.hl.pred", sprintf("%s--%s", key_val("post.newsite.lo"), key_val("post.newsite.hi")))
+if (!is.null(ppc$marg_all)) {
+  num_int("res.cov.msim", ppc$marg_all[["rdtj"]]); num_int("res.cov.wu", ppc$marg_all[["rdtwu"]])
+  num("res.cov.ratio", ppc$marg_all[["rdtj"]] / ppc$marg_all[["rdtwu"]])
+}
+
+# ---- Tables ---------------------------------------------------------------
+num_table("tab.post", tab)
+num_table("tab.sigma", tab_sig)
+num_table("tab.sites", tab_sites)
+if (exists("tab_emu")) num_table("tab.emuflags", tab_emu)
+num_table("tab.mcmc", tab_mcmc)
+
+# The manuscript lives outside this repository. When HRP2_MANUSCRIPT_DIR
+# points to a local copy, numbers.tex holds only the keys it cites (\nm{key}
+# in any .tex file there) and a cited key the code does not produce is
+# reported in Checks; otherwise numbers.tex holds every registered key.
+cited <- NULL
+if (!is.na(MANUSCRIPT_DIR) && dir.exists(MANUSCRIPT_DIR)) {
+  cited <- manuscript_keys(MANUSCRIPT_DIR)
+  # A folder without .tex files (e.g. before the sources are added) would
+  # otherwise give an empty numbers.tex
+  if (length(cited) == 0) { note("No \\nm{} keys found in %s; numbers.tex holds every registered key.", MANUSCRIPT_DIR); cited <- NULL }
+  missing_keys <- setdiff(cited, ls(NUMBERS))
+  if (length(missing_keys)) note("Keys cited in the manuscript but not produced: %s", paste(missing_keys, collapse = ", "))
+} else {
+  note("HRP2_MANUSCRIPT_DIR not set; numbers.tex holds every registered key.")
+}
+numbers_path <- write_numbers(file.path(OUT_DIR, "numbers.tex"),
+                              sprintf("RDT sensitivity %s, fit %s", SE, MCMC_OUT_DIR), keep = cited)
+cat(sprintf("Wrote %d keys to `%s`.\n\n", length(ls(NUMBERS)), numbers_path))
+keys <- sort(ls(NUMBERS)); vals <- vapply(keys, function(k) get(k, envir = NUMBERS), "")
+print(knitr::kable(data.table(number_key = keys, value = unname(ifelse(startsWith(keys, "tab."), "(table)", vals))), caption = "Registered numbers"))
+```
+
+# Checks
+
+```{r checks, results = "asis"}
+if (length(checks) == 0) cat("No problems found.\n") else cat(paste0("- ", checks, "\n"), sep = "")
+```

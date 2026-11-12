@@ -1,0 +1,55 @@
+# Package from CRAN
+cran::data.table
+cran::tidyverse
+cran::devtools
+cran::ggplot2
+cran::assertthat
+cran::ggpubr
+cran::reshape2
+cran::geofacet
+cran::cowplot
+cran::gridExtra
+cran::orderly
+cran::arrow
+cran::sf
+cran::patchwork
+cran::ggtext
+cran::DiceKriging
+cran::lhs
+cran::foreach
+cran::emmeans
+cran::brms
+cran::rstan
+cran::broom.mixed
+cran::RcppEigen
+cran::StanHeaders
+cran::BH
+cran::RcppParallel
+cran::posterior
+cran::ggrepel
+cran::ltc
+
+
+#url
+# cmdstanr -- not on CRAN. The cluster's task environment sets CMDSTAN
+# (pointing at an existing CmdStan install) and CMDSTANR_USE_RTOOLS,
+# indicating the cluster is provisioned to use cmdstanr as the brms backend
+# (see brms_int_cluster_fns.R's own comment for why -- rstan hit an
+# "invalid connection" error on this cluster).
+git::https://github.com/stan-dev/cmdstanr
+#git::https://github.com/mrc-ide/malariasimulation/
+#git::https://github.com/mrc-ide/malariasimulation/@dev
+git::https://github.com/mwalte10/malariasimulation/@age_spec_states
+#git::https://github.com/mrc-ide/site@site-2601
+git::https://github.com/mrc-ide/cali
+#git::https://github.com/mrc-ide/netz/
+#git::https://github.com/mrc-ide/postie@severe_inc
+
+
+#git::https://github.com/mrc-ide/malariasimulation/
+##git::https://github.com/mrc-ide/malariasimulation/@dev
+#git::https://github.com/mwalte10/malariasimulation/@age_spec_states
+#git::https://github.com/mrc-ide/site/
+##git::https://github.com/mrc-ide/cali
+#git::https://github.com/mrc-ide/netz/
+#git::https://github.com/mrc-ide/postie@severe_inc

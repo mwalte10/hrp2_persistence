@@ -1,0 +1,1093 @@
+id_1,hrp2_risk,hrp2_prospective_risk,Micro.2.10,ft,microscopy.use,rdt.nonadherence,fitness,rdt.det,name_1,iso
+10312910,High,NA,central,central,central,central,central,central,Daykundi,AFG
+10313012,High,NA,central,central,central,central,central,central,Laghman,AFG
+10313016,High,NA,central,central,central,central,central,central,Nuristan,AFG
+10313034,High,NA,central,central,central,central,central,central,Kandahar,AFG
+10313066,High,NA,central,central,central,central,central,central,Jawzjan,AFG
+10313075,High,NA,central,central,central,central,central,central,Nimroz,AFG
+10313131,High,NA,central,central,central,central,central,central,Sar-e-Pul,AFG
+10313482,High,NA,central,central,central,central,central,central,Parwan,AFG
+10313624,High,NA,central,central,central,central,central,central,Paktya,AFG
+10313664,High,NA,central,central,central,central,central,central,Badghis,AFG
+10313700,High,NA,central,central,central,central,central,central,Nangarhar,AFG
+10313718,High,NA,central,central,central,central,central,central,Bamyan,AFG
+10313764,High,NA,central,central,central,central,central,central,Hirat,AFG
+10313775,High,NA,central,central,central,central,central,central,Balkh,AFG
+10313795,High,NA,central,central,central,central,central,central,Kabul,AFG
+10313948,High,NA,central,central,central,central,central,central,Kunar,AFG
+10314021,High,NA,central,central,central,central,central,central,Ghor,AFG
+10314066,High,NA,central,central,central,central,central,central,Zabul,AFG
+10314432,High,NA,central,central,central,central,central,central,Hilmand,AFG
+10314437,High,NA,central,central,central,central,central,central,Ghazni,AFG
+10314470,High,NA,central,central,central,central,central,central,Uruzgan,AFG
+10314510,High,NA,central,central,central,central,central,central,Paktika,AFG
+10314617,High,NA,central,central,central,central,central,central,Kapisa,AFG
+10314655,High,NA,central,central,central,central,central,central,Logar,AFG
+10314839,High,NA,central,central,central,central,central,central,Panjsher,AFG
+10314871,High,NA,central,central,central,central,central,central,Faryab,AFG
+10315009,High,NA,central,central,central,central,central,central,Takhar,AFG
+10315627,High,NA,central,central,central,central,central,central,Samangan,AFG
+10315749,High,NA,central,central,central,central,central,central,Khost,AFG
+10315985,High,NA,central,central,central,central,central,central,Baghlan,AFG
+10316255,High,NA,central,central,central,central,central,central,Kunduz,AFG
+10316303,High,NA,central,central,central,central,central,central,Badakhshan,AFG
+10316393,High,NA,central,central,central,central,central,central,Wardak,AFG
+10312934,Marginal,Marginal,central,central,central,central,central,central,Bie,AGO
+10312941,Moderate,Marginal,central,central,central,central,central,central,Benguela,AGO
+10313102,Marginal,Marginal,central,central,central,central,central,central,Zaire,AGO
+10313200,Marginal,Marginal,central,central,central,central,central,central,Lunda Norte,AGO
+10313324,Marginal,Marginal,central,central,central,central,central,central,Moxico,AGO
+10313678,Marginal,Marginal,central,central,central,central,central,central,Cabinda,AGO
+10313695,High,Marginal,central,central,central,central,central,central,Namibe,AGO
+10313862,Moderate,Marginal,central,central,central,central,central,central,Huambo,AGO
+10314049,Marginal,Marginal,central,central,central,central,central,central,Luanda,AGO
+10314162,Marginal,Marginal,central,central,central,central,central,central,Cuanza Sul,AGO
+10314167,Marginal,Marginal,central,central,central,central,central,central,Uige,AGO
+10314219,Marginal,Marginal,central,central,central,central,central,central,Cuando Cubango,AGO
+10314519,Marginal,Marginal,central,central,central,central,central,central,Malanje,AGO
+10314789,High,Marginal,central,central,central,central,central,central,Huila,AGO
+10315276,Marginal,Marginal,central,central,central,central,central,central,Lunda Sul,AGO
+10315785,Marginal,Marginal,central,central,central,central,central,central,Bengo,AGO
+10315857,Marginal,Marginal,central,central,central,central,central,central,Cuanza Norte,AGO
+10316377,Moderate,Marginal,central,central,central,central,central,central,Cunene,AGO
+10313210,High,Marginal,central,central,central,central,central,central,Mwaro,BDI
+10313213,Marginal,Marginal,central,central,central,central,central,central,Rutana,BDI
+10313228,Moderate,Marginal,central,central,central,central,central,central,Bubanza,BDI
+10313868,Marginal,Marginal,central,central,central,central,central,central,Ruyigi,BDI
+10313972,Marginal,Marginal,central,central,central,central,central,central,Muyinga,BDI
+10314149,Moderate,Marginal,central,central,central,central,central,central,Bujumbura Mairie,BDI
+10314159,Marginal,Marginal,central,central,central,central,central,central,Cankuzo,BDI
+10314399,Marginal,Marginal,central,central,central,central,central,central,Kayanza,BDI
+10314593,Slight,Marginal,central,central,central,central,central,central,Makamba,BDI
+10314642,Moderate,Marginal,central,central,central,central,central,central,Muramvya,BDI
+10315333,Marginal,Marginal,central,central,central,central,central,central,Gitega,BDI
+10315401,Marginal,Marginal,central,central,central,central,central,central,Karuzi,BDI
+10315700,Marginal,Marginal,central,central,central,central,central,central,Kirundo,BDI
+10315892,Moderate,Slight,central,central,central,central,central,central,Bujumbura Rural,BDI
+10316028,Marginal,Marginal,central,central,central,central,central,central,Cibitoke,BDI
+10316098,Marginal,Marginal,central,central,central,central,central,central,Ngozi,BDI
+10316131,High,Marginal,central,central,central,central,central,central,Bururi,BDI
+604492674,Moderate,Marginal,central,central,central,central,central,central,Rumonge,BDI
+10312923,Marginal,Marginal,central,central,central,central,central,central,Collines,BEN
+10313578,Marginal,Marginal,central,central,central,central,central,central,Plateau,BEN
+10313908,Marginal,Marginal,central,central,central,central,central,central,Borgou,BEN
+10314009,Slight,Marginal,central,central,central,central,central,central,Littoral,BEN
+10314689,Marginal,Marginal,central,central,central,central,central,central,Couffo,BEN
+10315228,Marginal,Marginal,central,central,central,central,central,central,Zou,BEN
+10315483,Marginal,Marginal,central,central,central,central,central,central,Atakora,BEN
+10315599,Marginal,Marginal,central,central,central,central,central,central,Atlantique,BEN
+10315835,Marginal,Marginal,central,central,central,central,central,central,Alibori,BEN
+10315943,Marginal,Marginal,central,central,central,central,central,central,Mono,BEN
+10316078,Marginal,Marginal,central,central,central,central,central,central,Donga,BEN
+10316382,Marginal,Marginal,central,central,central,central,central,central,Oueme,BEN
+10312946,Marginal,Marginal,central,central,central,central,central,central,Centre-Ouest,BFA
+10312978,Marginal,Marginal,central,central,central,central,central,central,Sud-Ouest,BFA
+10313146,Marginal,Marginal,central,central,central,central,central,central,Sahel,BFA
+10313557,Slight,Marginal,central,central,central,central,central,central,Centre,BFA
+10313558,Marginal,Marginal,central,central,central,central,central,central,Centre-Nord,BFA
+10313567,Marginal,Marginal,central,central,central,central,central,central,Centre-Est,BFA
+10313584,Marginal,Marginal,central,central,central,central,central,central,Plateau-Central,BFA
+10313590,Marginal,Marginal,central,central,central,central,central,central,Cascades,BFA
+10313743,Marginal,Marginal,central,central,central,central,central,central,Est,BFA
+10313839,Marginal,Marginal,central,central,central,central,central,central,Nord,BFA
+10315008,Marginal,Marginal,central,central,central,central,central,central,Centre-Sud,BFA
+10315529,Marginal,Marginal,central,central,central,central,central,central,Boucle du Mouhoun,BFA
+10315770,Marginal,Marginal,central,central,central,central,central,central,Haut-Bassins,BFA
+10314097,High,NA,central,central,central,central,central,central,Chittagong,BGD
+10314406,High,NA,central,central,central,central,central,central,Rangpur,BGD
+10315307,High,NA,central,central,central,central,central,central,Sylhet,BGD
+604100830,High,NA,central,central,central,central,central,central,Mymensingh,BGD
+10313001,Moderate,NA,central,central,central,central,central,central,Paraiba,BRA
+10313290,Moderate,NA,central,central,central,central,central,central,Sergipe,BRA
+10313393,Moderate,NA,central,central,central,central,central,central,Rio Grande do Norte,BRA
+10313542,Moderate,NA,central,central,central,central,central,central,Roraima,BRA
+10313738,Moderate,NA,central,central,central,central,central,central,Tocantins,BRA
+10313787,Moderate,NA,central,central,central,central,central,central,Sao Paulo,BRA
+10313993,Moderate,NA,central,central,central,central,central,central,Ceara,BRA
+10314039,Moderate,NA,central,central,central,central,central,central,Amapa,BRA
+10314125,Moderate,NA,central,central,central,central,central,central,Rondonia,BRA
+10314188,Moderate,NA,central,central,central,central,central,central,Para,BRA
+10314795,Moderate,NA,central,central,central,central,central,central,Alagoas,BRA
+10314948,Moderate,NA,central,central,central,central,central,central,Minas Gerais,BRA
+10315023,Moderate,NA,central,central,central,central,central,central,Santa Catarina,BRA
+10315144,Moderate,NA,central,central,central,central,central,central,Goias,BRA
+10315222,Moderate,NA,central,central,central,central,central,central,Espirito Santo,BRA
+10315232,Moderate,NA,central,central,central,central,central,central,Maranhao,BRA
+10315374,Moderate,NA,central,central,central,central,central,central,Mato Grosso do Sul,BRA
+10315514,Moderate,NA,central,central,central,central,central,central,Mato Grosso,BRA
+10315622,Moderate,NA,central,central,central,central,central,central,Distrito Federal,BRA
+10315760,Moderate,NA,central,central,central,central,central,central,Bahia,BRA
+10315901,Moderate,NA,central,central,central,central,central,central,Piaui,BRA
+10315937,Moderate,NA,central,central,central,central,central,central,Parana,BRA
+10316009,Moderate,NA,central,central,central,central,central,central,Acre,BRA
+10316052,Moderate,NA,central,central,central,central,central,central,Pernambuco,BRA
+10316081,Moderate,NA,central,central,central,central,central,central,Amazonas,BRA
+10316156,Moderate,NA,central,central,central,central,central,central,Rio Grande do Sul,BRA
+10316219,Moderate,NA,central,central,central,central,central,central,Rio de Janeiro,BRA
+10315047,High,NA,central,central,central,central,central,central,Sarpang,BTN
+10313749,High,Slight,central,central,central,central,central,central,Kweneng,BWA
+10314588,High,Moderate,central,central,central,central,central,central,North-West,BWA
+10314970,High,Slight,central,central,central,central,central,central,Central,BWA
+10315081,High,Slight,central,central,central,central,central,central,Ghanzi,BWA
+10315541,High,Slight,central,central,central,central,central,central,North-East,BWA
+10316008,High,Moderate,central,central,central,central,central,central,Chobe,BWA
+10316208,High,Slight,central,central,central,central,central,central,Kgatleng,BWA
+10312914,Marginal,Marginal,central,central,central,central,central,central,Sangha-Mbaere,CAF
+10313219,Marginal,Marginal,central,central,central,central,central,central,Mbomou,CAF
+10313244,Marginal,Marginal,central,central,central,central,central,central,Haut-Mbomou,CAF
+10313359,Marginal,Marginal,central,central,central,central,central,central,Ouham Pende,CAF
+10313418,Slight,Marginal,central,central,central,central,central,central,Vakaga,CAF
+10313441,Marginal,Marginal,central,central,central,central,central,central,Ombella M'Poko,CAF
+10313758,Marginal,Marginal,central,central,central,central,central,central,Ouaka,CAF
+10313901,Slight,Marginal,central,central,central,central,central,central,Bamingui-Bangoran,CAF
+10314051,Marginal,Marginal,central,central,central,central,central,central,Lobaye,CAF
+10314279,Marginal,Marginal,central,central,central,central,central,central,Mambere-Kadei,CAF
+10314686,Marginal,Marginal,central,central,central,central,central,central,Ouham,CAF
+10314722,Marginal,Marginal,central,central,central,central,central,central,Kemo,CAF
+10314955,Marginal,Marginal,central,central,central,central,central,central,Basse-Kotto,CAF
+10315067,Marginal,Marginal,central,central,central,central,central,central,Bangui,CAF
+10315560,Marginal,Marginal,central,central,central,central,central,central,Nana-Mambere,CAF
+10315680,Marginal,Marginal,central,central,central,central,central,central,Haute-Kotto,CAF
+10316170,Marginal,Marginal,central,central,central,central,central,central,Nana-Gribizi,CAF
+10313698,Marginal,Marginal,central,central,central,central,central,central,Bas-Sassandra,CIV
+10314018,Marginal,Marginal,central,central,central,central,central,central,Woroba,CIV
+10314302,Marginal,Marginal,central,central,central,central,central,central,Montagnes,CIV
+10314379,Marginal,Marginal,central,central,central,central,central,central,Yamoussoukro,CIV
+10314504,Slight,Marginal,central,central,central,central,central,central,Denguele,CIV
+10314814,Marginal,Marginal,central,central,central,central,central,central,Goh-Djiboua,CIV
+10314932,Marginal,Marginal,central,central,central,central,central,central,Comoe,CIV
+10315042,Marginal,Marginal,central,central,central,central,central,central,Savanes,CIV
+10315209,Marginal,Marginal,central,central,central,central,central,central,Lacs,CIV
+10315472,Marginal,Marginal,central,central,central,central,central,central,Vallee du Bandama,CIV
+10315887,Marginal,Marginal,central,central,central,central,central,central,Lagunes,CIV
+10316005,Marginal,Marginal,central,central,central,central,central,central,Sassandra-Marahoue,CIV
+10316181,Moderate,Marginal,central,central,central,central,central,central,Abidjan,CIV
+10316245,Marginal,Marginal,central,central,central,central,central,central,Zanzan,CIV
+10313797,Moderate,Marginal,central,central,central,central,central,central,North West,CMR
+10314487,Marginal,Marginal,central,central,central,central,central,central,Est,CMR
+10314668,Marginal,Marginal,central,central,central,central,central,central,Nord,CMR
+10315127,Slight,Marginal,central,central,central,central,central,central,Centre,CMR
+10315130,Marginal,Marginal,central,central,central,central,central,central,Sud,CMR
+10315446,Moderate,Marginal,central,central,central,central,central,central,Ouest,CMR
+10315885,Marginal,Marginal,central,central,central,central,central,central,Adamaoua,CMR
+10316034,Slight,Marginal,central,central,central,central,central,central,Extreme Nord,CMR
+10316217,Moderate,Marginal,central,central,central,central,central,central,Littoral,CMR
+10316304,Slight,Marginal,central,central,central,central,central,central,South West,CMR
+10015048,Marginal,Marginal,central,central,central,central,central,central,Mongala,COD
+10015049,Marginal,Marginal,central,central,central,central,central,central,Nord-Ubangi,COD
+10015050,Marginal,Marginal,central,central,central,central,central,central,Sud-Ubangi,COD
+10015051,Marginal,Marginal,central,central,central,central,central,central,Tshuapa,COD
+10015053,Marginal,Marginal,central,central,central,central,central,central,Kwango,COD
+10015054,Marginal,Marginal,central,central,central,central,central,central,Kwilu,COD
+10015055,Marginal,Moderate,central,central,central,central,central,central,Mai-Ndombe,COD
+10015062,Marginal,Marginal,central,central,central,central,central,central,Kasai,COD
+10015066,Marginal,Marginal,central,central,central,central,central,central,Sankuru,COD
+10015068,Marginal,Marginal,central,central,central,central,central,central,Haut-Lomami,COD
+10015071,Marginal,Marginal,central,central,central,central,central,central,Lualaba,COD
+10015073,Marginal,Slight,central,central,central,central,central,central,Tanganyka,COD
+10015076,Marginal,Moderate,central,central,central,central,central,central,Maniema,COD
+10015077,High,High,central,central,central,central,central,central,Nord-Kivu,COD
+10015078,Moderate,High,central,central,central,central,central,central,Sud-Kivu,COD
+10015079,Marginal,Marginal,central,central,central,central,central,central,Bas-Uele,COD
+10015080,Marginal,Marginal,central,central,central,central,central,central,Haut-Uele,COD
+10015081,Marginal,Marginal,central,central,central,central,central,central,Ituri,COD
+10015083,Marginal,Marginal,central,central,central,central,central,central,Tshopo,COD
+10313185,Marginal,High,central,central,central,central,central,central,Kasai Oriental,COD
+10314703,Marginal,Marginal,central,central,central,central,central,central,Kongo Central,COD
+10314890,Marginal,Marginal,central,central,central,central,central,central,Equateur,COD
+10316392,Moderate,High,central,central,central,central,central,central,Kinshasa,COD
+604100800,Marginal,Moderate,central,central,central,central,central,central,Haut-Katanga,COD
+604100801,Marginal,Marginal,central,central,central,central,central,central,Lomami,COD
+604100802,Marginal,Marginal,central,central,central,central,central,central,Kasai Central,COD
+10312872,Marginal,Marginal,central,central,central,central,central,central,Sangha,COG
+10312917,Slight,Marginal,central,central,central,central,central,central,Brazzaville,COG
+10312940,Marginal,Marginal,central,central,central,central,central,central,Cuvette,COG
+10312955,Marginal,Marginal,central,central,central,central,central,central,Lekoumou,COG
+10313241,Marginal,Marginal,central,central,central,central,central,central,Bouenza,COG
+10313651,Marginal,Marginal,central,central,central,central,central,central,Kouilou,COG
+10314451,Slight,Marginal,central,central,central,central,central,central,Point-Noire,COG
+10315656,Marginal,Marginal,central,central,central,central,central,central,Pool,COG
+10315693,Marginal,Marginal,central,central,central,central,central,central,Plateaux,COG
+10315824,Marginal,Marginal,central,central,central,central,central,central,Niari,COG
+10316044,Marginal,Marginal,central,central,central,central,central,central,Cuvette-Ouest,COG
+10316373,Marginal,Marginal,central,central,central,central,central,central,Likouala,COG
+10312924,Moderate,NA,central,central,central,central,central,central,Amazonas,COL
+10312999,Moderate,NA,central,central,central,central,central,central,Magdalena,COL
+10313002,Moderate,NA,central,central,central,central,central,central,Guainia,COL
+10313254,Moderate,NA,central,central,central,central,central,central,Antioquia,COL
+10313353,Moderate,NA,central,central,central,central,central,central,Norte De Santander,COL
+10313428,Moderate,NA,central,central,central,central,central,central,Meta,COL
+10313564,Moderate,NA,central,central,central,central,central,central,Narino,COL
+10313704,Moderate,NA,central,central,central,central,central,central,Tolima,COL
+10313855,Moderate,NA,central,central,central,central,central,central,Vaupes,COL
+10313915,Moderate,NA,central,central,central,central,central,central,Santander,COL
+10314008,Moderate,NA,central,central,central,central,central,central,Cordoba,COL
+10314036,Moderate,NA,central,central,central,central,central,central,Cesar,COL
+10314265,Moderate,NA,central,central,central,central,central,central,Caqueta,COL
+10314286,Moderate,NA,central,central,central,central,central,central,Guaviare,COL
+10314310,Moderate,NA,central,central,central,central,central,central,Casanare,COL
+10314428,Moderate,NA,central,central,central,central,central,central,Putumayo,COL
+10314606,Moderate,NA,central,central,central,central,central,central,Arauca,COL
+10314693,Moderate,NA,central,central,central,central,central,central,Cauca,COL
+10314732,Moderate,NA,central,central,central,central,central,central,Quindio,COL
+10314898,Moderate,NA,central,central,central,central,central,central,Cundinamarca,COL
+10314925,Moderate,NA,central,central,central,central,central,central,Atlantico,COL
+10315635,Moderate,NA,central,central,central,central,central,central,Sucre,COL
+10315845,Moderate,NA,central,central,central,central,central,central,Choco,COL
+10315902,Moderate,NA,central,central,central,central,central,central,Bolivar,COL
+10316026,Moderate,NA,central,central,central,central,central,central,Vichada,COL
+10316110,Moderate,NA,central,central,central,central,central,central,Valle Del Cauca,COL
+10316171,Moderate,NA,central,central,central,central,central,central,Risaralda,COL
+10313452,High,Marginal,central,central,central,central,central,central,Moheli,COM
+10315233,High,Marginal,central,central,central,central,central,central,Ngazidja,COM
+10315278,High,Marginal,central,central,central,central,central,central,Anjouan,COM
+10312953,High,High,central,central,central,central,central,central,Ali Sabieh,DJI
+10313203,High,High,central,central,central,central,central,central,Djibouti,DJI
+10313677,High,High,central,central,central,central,central,central,Dikhil,DJI
+10314957,Marginal,High,central,central,central,central,central,central,Tadjourah,DJI
+10315724,Marginal,High,central,central,central,central,central,central,Obock,DJI
+604100808,High,NA,central,central,central,central,central,central,Region Valdesia,DOM
+604100810,High,NA,central,central,central,central,central,central,Region El Valle,DOM
+604100811,High,NA,central,central,central,central,central,central,Region Yuma,DOM
+604100812,High,NA,central,central,central,central,central,central,Region Higuamo,DOM
+604100813,High,NA,central,central,central,central,central,central,Region Ozama O Metropolitana,DOM
+10312902,High,NA,central,central,central,central,central,central,Carchi,ECU
+10312922,High,NA,central,central,central,central,central,central,Azuay,ECU
+10313013,High,NA,central,central,central,central,central,central,Pastaza,ECU
+10313545,High,NA,central,central,central,central,central,central,Morona Santiago,ECU
+10313835,High,NA,central,central,central,central,central,central,Esmeraldas,ECU
+10314314,High,NA,central,central,central,central,central,central,Loja,ECU
+10314414,High,NA,central,central,central,central,central,central,Imbabura,ECU
+10314670,High,NA,central,central,central,central,central,central,Orellana,ECU
+10315075,High,NA,central,central,central,central,central,central,Manabi,ECU
+10315317,High,NA,central,central,central,central,central,central,Bolivar,ECU
+10315769,High,NA,central,central,central,central,central,central,Santo Domingo de los Tsachilas,ECU
+10315772,High,NA,central,central,central,central,central,central,Los Rios,ECU
+10315945,High,NA,central,central,central,central,central,central,Pichincha,ECU
+10316107,High,NA,central,central,central,central,central,central,Guayas,ECU
+10316126,High,NA,central,central,central,central,central,central,Sucumbios,ECU
+10316190,High,NA,central,central,central,central,central,central,Tungurahua,ECU
+10316281,High,NA,central,central,central,central,central,central,Canar,ECU
+604100829,High,NA,central,central,central,central,central,central,Zona No Delimitada,ECU
+10313148,High,High,central,central,central,central,central,central,Semenawi Keih Bahri,ERI
+10313697,High,High,central,central,central,central,central,central,Anseba,ERI
+10314142,High,High,central,central,central,central,central,central,Maekel,ERI
+10315474,High,High,central,central,central,central,central,central,Debubawi Keih Bahri,ERI
+10315807,High,High,central,central,central,central,central,central,Debub,ERI
+10316250,High,High,central,central,central,central,central,central,Gash Barka,ERI
+604492669,High,High,central,central,central,central,central,central,Archipelagos,ERI
+10313147,High,High,central,central,central,central,central,central,Dire Dawa,ETH
+10313355,High,High,central,central,central,central,central,central,SNNPR,ETH
+10313464,High,High,central,central,central,central,central,central,Tigray,ETH
+10313856,High,High,central,central,central,central,central,central,Amhara,ETH
+10314037,High,High,central,central,central,central,central,central,Gambela,ETH
+10314847,High,High,central,central,central,central,central,central,Beneshangul Gumu,ETH
+10314864,High,High,central,central,central,central,central,central,Addis Ababa,ETH
+10315220,High,High,central,central,central,central,central,central,Afar,ETH
+10315893,High,High,central,central,central,central,central,central,Hareri,ETH
+10316072,High,High,central,central,central,central,central,central,Somali,ETH
+10316246,High,High,central,central,central,central,central,central,Oromia,ETH
+10313036,Marginal,Marginal,central,central,central,central,central,central,Moyen-Ogooue,GAB
+10313998,Marginal,Marginal,central,central,central,central,central,central,Ogooue-Ivindo,GAB
+10315257,Marginal,Marginal,central,central,central,central,central,central,Woleu-Ntem,GAB
+10315314,Marginal,Marginal,central,central,central,central,central,central,Ogooue-lolo,GAB
+10315465,Marginal,Marginal,central,central,central,central,central,central,Ngounie,GAB
+10315674,Marginal,Marginal,central,central,central,central,central,central,Haut-Ogooue,GAB
+10315694,Marginal,Marginal,central,central,central,central,central,central,Estuaire,GAB
+10316418,Marginal,Marginal,central,central,central,central,central,central,Nyanga,GAB
+10316420,Marginal,Marginal,central,central,central,central,central,central,Ogooue-Maritime,GAB
+10313074,Marginal,Marginal,central,central,central,central,central,central,Faranah,GIN
+10313882,Slight,Marginal,central,central,central,central,central,central,Conakry,GIN
+10314312,Marginal,Marginal,central,central,central,central,central,central,Mamou,GIN
+10314339,Marginal,Marginal,central,central,central,central,central,central,Kindia,GIN
+10315509,Slight,Marginal,central,central,central,central,central,central,Boke,GIN
+10315690,Marginal,Marginal,central,central,central,central,central,central,Nzerekore,GIN
+10315826,Slight,Marginal,central,central,central,central,central,central,Labe,GIN
+10316006,Marginal,Marginal,central,central,central,central,central,central,Kankan,GIN
+10314195,High,Moderate,central,central,central,central,central,central,Upper River,GMB
+10315182,High,Moderate,central,central,central,central,central,central,North Bank,GMB
+10315523,High,Moderate,central,central,central,central,central,central,West Coast,GMB
+10315687,High,Moderate,central,central,central,central,central,central,Central River,GMB
+10315735,High,Moderate,central,central,central,central,central,central,Lower River,GMB
+604492672,High,Slight,central,central,central,central,central,central,Kanifing Municipal Council,GMB
+10313057,High,Slight,central,central,central,central,central,central,Bafata,GNB
+10313181,High,Slight,central,central,central,central,central,central,Biombo,GNB
+10313348,High,Marginal,central,central,central,central,central,central,Quinara,GNB
+10313370,High,Marginal,central,central,central,central,central,central,Bolama,GNB
+10313570,High,Slight,central,central,central,central,central,central,Bissau,GNB
+10314022,High,Moderate,central,central,central,central,central,central,Cacheu,GNB
+10315372,Moderate,Marginal,central,central,central,central,central,central,Tombali,GNB
+10315399,High,Slight,central,central,central,central,central,central,Gabu,GNB
+10316231,High,Moderate,central,central,central,central,central,central,Oio,GNB
+10313108,Marginal,High,central,central,central,central,central,central,Centro Sur,GNQ
+10315162,Slight,High,central,central,central,central,central,central,Bioko Sur,GNQ
+10315502,Marginal,High,central,central,central,central,central,central,Litoral,GNQ
+10315598,Marginal,High,central,central,central,central,central,central,Kie-Ntem,GNQ
+10316118,Slight,High,central,central,central,central,central,central,Bioko Norte,GNQ
+10316356,Marginal,High,central,central,central,central,central,central,Wele-Nzas,GNQ
+10312925,High,NA,central,central,central,central,central,central,Upper Demerara/Berbice (Region n10),GUY
+10313349,High,NA,central,central,central,central,central,central,Potaro/Siparuni (Region n8),GUY
+10313387,High,NA,central,central,central,central,central,central,East Berbice/Corentyne (Region n6),GUY
+10313781,High,NA,central,central,central,central,central,central,Mahaica Berbice (Region n5),GUY
+10314140,High,NA,central,central,central,central,central,central,Upper Takutu/Upper Essequibo (Region n9),GUY
+10314592,High,NA,central,central,central,central,central,central,Pomeroon/Supenaam (Region n2),GUY
+10314921,High,NA,central,central,central,central,central,central,Cuyuni/Mazaruni (Region n7),GUY
+10315176,High,NA,central,central,central,central,central,central,Essequibo Islands/West Demerara (Region n3),GUY
+10315415,High,NA,central,central,central,central,central,central,Demerara/Mahaica (Region n4),GUY
+10315646,High,NA,central,central,central,central,central,central,Barima/Waini (Region n1),GUY
+10312886,Moderate,NA,central,central,central,central,central,central,Islas de La Bahia,HND
+10313793,Moderate,NA,central,central,central,central,central,central,El Paraiso,HND
+10314084,Moderate,NA,central,central,central,central,central,central,Francisco Morazan,HND
+10314213,Moderate,NA,central,central,central,central,central,central,Yoro,HND
+10314511,Moderate,NA,central,central,central,central,central,central,Copan,HND
+10314565,Moderate,NA,central,central,central,central,central,central,Gracias a Dios,HND
+10314622,Moderate,NA,central,central,central,central,central,central,Colon,HND
+10314994,Moderate,NA,central,central,central,central,central,central,Comayagua,HND
+10315359,Moderate,NA,central,central,central,central,central,central,Choluteca,HND
+10315469,Moderate,NA,central,central,central,central,central,central,Olancho,HND
+10315643,Moderate,NA,central,central,central,central,central,central,Atlantida,HND
+10316101,Moderate,NA,central,central,central,central,central,central,Lempira,HND
+10316119,Moderate,NA,central,central,central,central,central,central,Cortes,HND
+10312933,High,NA,central,central,central,central,central,central,Grande Anse,HTI
+10312990,High,NA,central,central,central,central,central,central,Nord Est,HTI
+10313163,High,NA,central,central,central,central,central,central,Nord,HTI
+10313465,High,NA,central,central,central,central,central,central,Sud-Est,HTI
+10313733,High,NA,central,central,central,central,central,central,Centre,HTI
+10314346,High,NA,central,central,central,central,central,central,Sud,HTI
+10314449,High,NA,central,central,central,central,central,central,Nord Ouest,HTI
+10315267,High,NA,central,central,central,central,central,central,Artibonite,HTI
+10315386,High,NA,central,central,central,central,central,central,Ouest,HTI
+10315812,High,NA,central,central,central,central,central,central,Nippes,HTI
+10312991,High,NA,central,central,central,central,central,central,Banten,IDN
+10313061,High,NA,central,central,central,central,central,central,Jawa Tengah,IDN
+10313088,High,NA,central,central,central,central,central,central,Sumatera Barat,IDN
+10313326,High,NA,central,central,central,central,central,central,Kalimantan Selatan,IDN
+10313362,High,NA,central,central,central,central,central,central,Irian Jaya Barat,IDN
+10313503,High,NA,central,central,central,central,central,central,Gorontalo,IDN
+10313818,High,NA,central,central,central,central,central,central,Aceh,IDN
+10313823,High,NA,central,central,central,central,central,central,Nusa Tenggara Timur,IDN
+10313879,High,NA,central,central,central,central,central,central,Bali,IDN
+10313905,High,NA,central,central,central,central,central,central,Sulawesi Barat,IDN
+10314307,High,NA,central,central,central,central,central,central,Sulawesi Tengah,IDN
+10314320,High,NA,central,central,central,central,central,central,Jawa Timur,IDN
+10314624,High,NA,central,central,central,central,central,central,Kalimantan Tengah,IDN
+10314680,High,NA,central,central,central,central,central,central,Jakarta Raya,IDN
+10314726,High,NA,central,central,central,central,central,central,Sumatera Selatan,IDN
+10315017,High,NA,central,central,central,central,central,central,Sulawesi Selatan,IDN
+10315056,High,NA,central,central,central,central,central,central,Jambi,IDN
+10315185,High,NA,central,central,central,central,central,central,Sulawesi Utara,IDN
+10315221,High,NA,central,central,central,central,central,central,Kepulauan Riau,IDN
+10315351,High,NA,central,central,central,central,central,central,Yogyakarta,IDN
+10315510,High,NA,central,central,central,central,central,central,Sulawesi Tenggara,IDN
+10315519,High,NA,central,central,central,central,central,central,Kalimantan Barat,IDN
+10315612,High,NA,central,central,central,central,central,central,Papua,IDN
+10315634,High,NA,central,central,central,central,central,central,Jawa Barat,IDN
+10315738,High,NA,central,central,central,central,central,central,Kalimantan Timur,IDN
+10315806,High,NA,central,central,central,central,central,central,Maluku,IDN
+10315865,High,NA,central,central,central,central,central,central,Kalimantan Utara,IDN
+10315882,High,NA,central,central,central,central,central,central,Bangka-Belitung,IDN
+10315975,High,NA,central,central,central,central,central,central,Lampung,IDN
+10316102,High,NA,central,central,central,central,central,central,Nusa Tenggara Barat,IDN
+10316133,High,NA,central,central,central,central,central,central,Sumatera Utara,IDN
+10316337,High,NA,central,central,central,central,central,central,Maluku Utara,IDN
+10316434,High,NA,central,central,central,central,central,central,Bengkulu,IDN
+10316442,High,NA,central,central,central,central,central,central,Riau,IDN
+10313371,High,NA,central,central,central,central,central,central,Himachal Pradesh,IND
+10313379,High,NA,central,central,central,central,central,central,Arunachal Pradesh,IND
+10313544,High,NA,central,central,central,central,central,central,Gujarat,IND
+10313610,High,NA,central,central,central,central,central,central,Assam,IND
+10313675,High,NA,central,central,central,central,central,central,Bihar,IND
+10313772,High,NA,central,central,central,central,central,central,Karnataka,IND
+10314481,High,NA,central,central,central,central,central,central,Puducherry,IND
+10314559,High,NA,central,central,central,central,central,central,Haryana,IND
+10314579,High,NA,central,central,central,central,central,central,Manipur,IND
+10314729,High,NA,central,central,central,central,central,central,Goa,IND
+10314737,High,NA,central,central,central,central,central,central,Dadra and Nagar Haveli,IND
+10314804,High,NA,central,central,central,central,central,central,Chhattisgarh,IND
+10314880,High,NA,central,central,central,central,central,central,Delhi,IND
+10314889,High,NA,central,central,central,central,central,central,Daman and Diu,IND
+10314923,High,NA,central,central,central,central,central,central,Meghalaya,IND
+10315000,High,NA,central,central,central,central,central,central,Telangana,IND
+10315044,High,NA,central,central,central,central,central,central,Punjab,IND
+10315194,High,NA,central,central,central,central,central,central,Jharkhand,IND
+10315224,High,NA,central,central,central,central,central,central,Jammu and Kashmir,IND
+10315305,High,NA,central,central,central,central,central,central,Rajasthan,IND
+10315341,High,NA,central,central,central,central,central,central,Andhra Pradesh,IND
+10315369,High,NA,central,central,central,central,central,central,Lakshadweep,IND
+10315492,High,NA,central,central,central,central,central,central,Madhya Pradesh,IND
+10315667,High,NA,central,central,central,central,central,central,Tamil Nadu,IND
+10315753,High,NA,central,central,central,central,central,central,Uttarakhand,IND
+10315872,High,NA,central,central,central,central,central,central,Nagaland,IND
+10315914,High,NA,central,central,central,central,central,central,West Bengal,IND
+10315928,High,NA,central,central,central,central,central,central,Maharashtra,IND
+10315930,High,NA,central,central,central,central,central,central,Mizoram,IND
+10315941,High,NA,central,central,central,central,central,central,Odisha,IND
+10316203,High,NA,central,central,central,central,central,central,Tripura,IND
+10316265,High,NA,central,central,central,central,central,central,Chandigarh,IND
+10316288,High,NA,central,central,central,central,central,central,Andaman and Nicobar,IND
+10316313,High,NA,central,central,central,central,central,central,Uttar Pradesh,IND
+10316349,High,NA,central,central,central,central,central,central,Kerala,IND
+10312858,High,High,central,central,central,central,central,central,Garissa,KEN
+10312987,High,High,central,central,central,central,central,central,Embu,KEN
+10313021,High,High,central,central,central,central,central,central,Bungoma,KEN
+10313156,High,High,central,central,central,central,central,central,Narok,KEN
+10313221,High,High,central,central,central,central,central,central,Kakamega,KEN
+10313249,High,High,central,central,central,central,central,central,Makueni,KEN
+10313251,High,High,central,central,central,central,central,central,Kiambu,KEN
+10313285,High,High,central,central,central,central,central,central,Vihiga,KEN
+10313301,Moderate,Moderate,central,central,central,central,central,central,Lamu,KEN
+10313305,High,High,central,central,central,central,central,central,Busia,KEN
+10313306,High,High,central,central,central,central,central,central,Isiolo,KEN
+10313339,High,High,central,central,central,central,central,central,Tana River,KEN
+10313489,High,High,central,central,central,central,central,central,Nyamira,KEN
+10313601,High,High,central,central,central,central,central,central,Kirinyaga,KEN
+10313654,High,High,central,central,central,central,central,central,Tharaka-Nithi,KEN
+10313684,High,High,central,central,central,central,central,central,Homa Bay,KEN
+10313703,Moderate,Moderate,central,central,central,central,central,central,Kilifi,KEN
+10313906,High,High,central,central,central,central,central,central,Mombasa,KEN
+10313952,High,High,central,central,central,central,central,central,Meru,KEN
+10313976,High,High,central,central,central,central,central,central,Nairobi,KEN
+10313999,High,High,central,central,central,central,central,central,Siaya,KEN
+10314006,High,High,central,central,central,central,central,central,Nandi,KEN
+10314095,High,High,central,central,central,central,central,central,Kajiado,KEN
+10314353,High,High,central,central,central,central,central,central,Baringo,KEN
+10314583,High,High,central,central,central,central,central,central,Kericho,KEN
+10314603,High,High,central,central,central,central,central,central,Machakos,KEN
+10314661,High,High,central,central,central,central,central,central,Kisii,KEN
+10314769,Moderate,High,central,central,central,central,central,central,Kwale,KEN
+10314908,High,High,central,central,central,central,central,central,Laikipia,KEN
+10314936,High,High,central,central,central,central,central,central,Nakuru,KEN
+10314989,High,High,central,central,central,central,central,central,Kisumu,KEN
+10315062,High,High,central,central,central,central,central,central,Marsabit,KEN
+10315098,High,High,central,central,central,central,central,central,Nyandarua,KEN
+10315436,High,High,central,central,central,central,central,central,Mandera,KEN
+10315647,High,High,central,central,central,central,central,central,Uasin Gishu,KEN
+10315697,High,High,central,central,central,central,central,central,Wajir,KEN
+10315810,High,High,central,central,central,central,central,central,Bomet,KEN
+10315840,High,High,central,central,central,central,central,central,Trans Nzoia,KEN
+10315849,High,High,central,central,central,central,central,central,Murang'a,KEN
+10315923,High,High,central,central,central,central,central,central,Taita Taveta,KEN
+10315938,High,High,central,central,central,central,central,central,Elgeyo-Marakwet,KEN
+10315955,High,High,central,central,central,central,central,central,West Pokot,KEN
+10316065,High,High,central,central,central,central,central,central,Kitui,KEN
+10316172,High,High,central,central,central,central,central,central,Turkana,KEN
+10316229,High,High,central,central,central,central,central,central,Samburu,KEN
+10316234,High,High,central,central,central,central,central,central,Nyeri,KEN
+10316335,High,High,central,central,central,central,central,central,Migori,KEN
+10312894,High,NA,central,central,central,central,central,central,Ratanak Kiri,KHM
+10312912,High,NA,central,central,central,central,central,central,Koh Kong,KHM
+10313029,High,NA,central,central,central,central,central,central,Kampong Speu,KHM
+10313456,High,NA,central,central,central,central,central,central,Prey Veng,KHM
+10313517,High,NA,central,central,central,central,central,central,Takeo,KHM
+10313674,High,NA,central,central,central,central,central,central,Kampong Cham,KHM
+10313869,High,NA,central,central,central,central,central,central,Mondul Kiri,KHM
+10313886,High,NA,central,central,central,central,central,central,Kampong Thom,KHM
+10313951,High,NA,central,central,central,central,central,central,Tboung Khmum,KHM
+10314157,High,NA,central,central,central,central,central,central,Kandal,KHM
+10314223,High,NA,central,central,central,central,central,central,Kratie,KHM
+10314363,High,NA,central,central,central,central,central,central,Pursat,KHM
+10314365,High,NA,central,central,central,central,central,central,Siemreap,KHM
+10314833,High,NA,central,central,central,central,central,central,Pailin,KHM
+10314928,High,NA,central,central,central,central,central,central,Preah Sihanouk,KHM
+10315138,High,NA,central,central,central,central,central,central,Oddar Meanchey,KHM
+10315291,High,NA,central,central,central,central,central,central,Kampong Chhnang,KHM
+10315311,High,NA,central,central,central,central,central,central,Banteay Meanchey,KHM
+10315501,High,NA,central,central,central,central,central,central,Kampot,KHM
+10315710,High,NA,central,central,central,central,central,central,Svay Rieng,KHM
+10315776,High,NA,central,central,central,central,central,central,Battambang,KHM
+10315784,High,NA,central,central,central,central,central,central,Stung Treng,KHM
+10316140,High,NA,central,central,central,central,central,central,Preah Vihear,KHM
+10316164,High,NA,central,central,central,central,central,central,Phnom Penh,KHM
+10312893,High,NA,central,central,central,central,central,central,Champasack,LAO
+10312944,High,NA,central,central,central,central,central,central,Oudomxai,LAO
+10313331,High,NA,central,central,central,central,central,central,Louangphabang,LAO
+10313369,High,NA,central,central,central,central,central,central,Houaphan,LAO
+10313736,High,NA,central,central,central,central,central,central,Bokeo,LAO
+10313776,High,NA,central,central,central,central,central,central,Salavan,LAO
+10313786,High,NA,central,central,central,central,central,central,Vientiane,LAO
+10313822,High,NA,central,central,central,central,central,central,Attapeu,LAO
+10314046,High,NA,central,central,central,central,central,central,Xaisomboon,LAO
+10314127,High,NA,central,central,central,central,central,central,Phongsaly,LAO
+10314299,High,NA,central,central,central,central,central,central,Savannakhet,LAO
+10314350,High,NA,central,central,central,central,central,central,Xaignabouly,LAO
+10314738,High,NA,central,central,central,central,central,central,Louangnamtha,LAO
+10314836,High,NA,central,central,central,central,central,central,Xiengkhouang,LAO
+10314856,High,NA,central,central,central,central,central,central,Bolikhamxai,LAO
+10314977,High,NA,central,central,central,central,central,central,Vientiane Capital,LAO
+10315071,High,NA,central,central,central,central,central,central,Khammouan,LAO
+10316241,High,NA,central,central,central,central,central,central,Sekong,LAO
+10312936,Marginal,Marginal,central,central,central,central,central,central,River Gee,LBR
+10313289,Marginal,Marginal,central,central,central,central,central,central,Grand Kru,LBR
+10313657,Marginal,Marginal,central,central,central,central,central,central,Montserrado,LBR
+10313929,Marginal,Marginal,central,central,central,central,central,central,Grand Gedeh,LBR
+10314040,Marginal,Marginal,central,central,central,central,central,central,Sinoe,LBR
+10314099,Marginal,Marginal,central,central,central,central,central,central,Bomi,LBR
+10314832,Marginal,Marginal,central,central,central,central,central,central,Grand Cape Mount,LBR
+10315295,Marginal,Marginal,central,central,central,central,central,central,River Cess,LBR
+10315528,Marginal,Marginal,central,central,central,central,central,central,Bong,LBR
+10315551,Marginal,Marginal,central,central,central,central,central,central,Nimba,LBR
+10315875,Marginal,Marginal,central,central,central,central,central,central,Grand Bassa,LBR
+10315879,Marginal,Marginal,central,central,central,central,central,central,Lofa,LBR
+10316142,Marginal,Marginal,central,central,central,central,central,central,Margibi,LBR
+10316179,Marginal,Marginal,central,central,central,central,central,central,Gbapolu,LBR
+10316272,Marginal,Marginal,central,central,central,central,central,central,Maryland,LBR
+10022983,High,Marginal,central,central,central,central,central,central,Analamanga,MDG
+10022984,High,Marginal,central,central,central,central,central,central,Bongolava,MDG
+10022985,High,Marginal,central,central,central,central,central,central,Itasy,MDG
+10022986,High,Marginal,central,central,central,central,central,central,Vakinankaratra,MDG
+10022987,High,Marginal,central,central,central,central,central,central,Diana,MDG
+10022988,High,Marginal,central,central,central,central,central,central,Sava,MDG
+10022989,High,Marginal,central,central,central,central,central,central,Amoron I Mania,MDG
+10022990,High,Marginal,central,central,central,central,central,central,Atsimo Atsinanana,MDG
+10022991,High,Marginal,central,central,central,central,central,central,Haute Matsiatra,MDG
+10022992,High,Marginal,central,central,central,central,central,central,Ihorombe,MDG
+10022993,High,Marginal,central,central,central,central,central,central,Vatovavy Fitovinany,MDG
+10022994,High,Marginal,central,central,central,central,central,central,Betsiboka,MDG
+10022995,High,Marginal,central,central,central,central,central,central,Boeny,MDG
+10022996,High,Marginal,central,central,central,central,central,central,Melaky,MDG
+10022997,High,Marginal,central,central,central,central,central,central,Sofia,MDG
+10022998,High,Marginal,central,central,central,central,central,central,Alaotra Mangoro,MDG
+10022999,High,Marginal,central,central,central,central,central,central,Analanjirofo,MDG
+10023000,High,Marginal,central,central,central,central,central,central,Atsinanana,MDG
+10023001,High,Marginal,central,central,central,central,central,central,Androy,MDG
+10023002,High,Marginal,central,central,central,central,central,central,Anosy,MDG
+10023003,High,Marginal,central,central,central,central,central,central,Atsimo Andrefana,MDG
+10023004,High,Marginal,central,central,central,central,central,central,Menabe,MDG
+10313023,High,High,central,central,central,central,central,central,Kidal,MLI
+10313801,Slight,Moderate,central,central,central,central,central,central,Segou,MLI
+10314141,High,High,central,central,central,central,central,central,Tombouctou,MLI
+10314187,Marginal,Slight,central,central,central,central,central,central,Koulikoro,MLI
+10314404,Moderate,Moderate,central,central,central,central,central,central,Kayes,MLI
+10314779,Slight,Moderate,central,central,central,central,central,central,Mopti,MLI
+10315387,Moderate,High,central,central,central,central,central,central,Gao,MLI
+10315571,Moderate,Moderate,central,central,central,central,central,central,Bamako,MLI
+10316417,Marginal,Marginal,central,central,central,central,central,central,Sikasso,MLI
+10313090,High,NA,central,central,central,central,central,central,Sagaing,MMR
+10313394,High,NA,central,central,central,central,central,central,Kayah,MMR
+10313455,High,NA,central,central,central,central,central,central,Kayin,MMR
+10313917,High,NA,central,central,central,central,central,central,Mon,MMR
+10314329,High,NA,central,central,central,central,central,central,Mandalay,MMR
+10314660,High,NA,central,central,central,central,central,central,Tanintharyi,MMR
+10314827,High,NA,central,central,central,central,central,central,Rakhine,MMR
+10314875,High,NA,central,central,central,central,central,central,Naypyitaw,MMR
+10314906,High,NA,central,central,central,central,central,central,Chin,MMR
+10314981,High,NA,central,central,central,central,central,central,Ayeyarwady,MMR
+10315195,High,NA,central,central,central,central,central,central,Magway,MMR
+10315616,High,NA,central,central,central,central,central,central,Yangon,MMR
+10315997,High,NA,central,central,central,central,central,central,Kachin,MMR
+10822973,High,NA,central,central,central,central,central,central,Bago East,MMR
+10822974,High,NA,central,central,central,central,central,central,Bago West,MMR
+10822975,High,NA,central,central,central,central,central,central,Shan (North),MMR
+10822976,High,NA,central,central,central,central,central,central,Shan (East),MMR
+10822977,High,NA,central,central,central,central,central,central,Shan (South),MMR
+10313272,Moderate,Slight,central,central,central,central,central,central,Tete,MOZ
+10313336,Marginal,Marginal,central,central,central,central,central,central,Cabo Delgado,MOZ
+10314211,Marginal,Marginal,central,central,central,central,central,central,Manica,MOZ
+10314340,Marginal,Marginal,central,central,central,central,central,central,Nampula,MOZ
+10314750,Marginal,Marginal,central,central,central,central,central,central,Sofala,MOZ
+10314794,Marginal,Marginal,central,central,central,central,central,central,Niassa,MOZ
+10315212,Marginal,Marginal,central,central,central,central,central,central,Zambezia,MOZ
+10315818,Moderate,Marginal,central,central,central,central,central,central,Gaza,MOZ
+10315859,Slight,Marginal,central,central,central,central,central,central,Inhambane,MOZ
+10316291,High,Slight,central,central,central,central,central,central,Maputo,MOZ
+10313341,Moderate,Slight,central,central,central,central,central,central,Hodh Ech Chargi,MRT
+10313587,High,Slight,central,central,central,central,central,central,Gorgol,MRT
+10313942,High,Marginal,central,central,central,central,central,central,Nouakchott,MRT
+10314325,Moderate,Marginal,central,central,central,central,central,central,Tagant,MRT
+10315443,High,Slight,central,central,central,central,central,central,Guidimakha,MRT
+10315989,High,Marginal,central,central,central,central,central,central,Assaba,MRT
+10316103,High,Slight,central,central,central,central,central,central,Trarza,MRT
+10316188,High,Slight,central,central,central,central,central,central,Brakna,MRT
+10316317,Moderate,Marginal,central,central,central,central,central,central,Hodh El Gharbi,MRT
+10823024,Moderate,Moderate,central,central,central,central,central,central,Central Region,MWI
+10823025,High,High,central,central,central,central,central,central,Northern Region,MWI
+10823026,Moderate,Moderate,central,central,central,central,central,central,Southern Region,MWI
+10313112,High,NA,central,central,central,central,central,central,Sarawak,MYS
+10315595,High,NA,central,central,central,central,central,central,Sabah,MYS
+10313531,High,Marginal,central,central,central,central,central,central,Khomas,NAM
+10313710,High,Slight,central,central,central,central,central,central,Oshikoto,NAM
+10313978,High,Slight,central,central,central,central,central,central,Ohangwena,NAM
+10314354,High,Slight,central,central,central,central,central,central,Omaheke,NAM
+10315179,High,Slight,central,central,central,central,central,central,Otjozondjupa,NAM
+10315244,High,Moderate,central,central,central,central,central,central,Kavango,NAM
+10315767,High,Marginal,central,central,central,central,central,central,Erongo,NAM
+10315967,High,Marginal,central,central,central,central,central,central,Kunene,NAM
+10316178,High,Marginal,central,central,central,central,central,central,Omusati,NAM
+10316198,High,Marginal,central,central,central,central,central,central,Oshana,NAM
+10316266,High,Moderate,central,central,central,central,central,central,Zambezi,NAM
+10313423,Slight,Marginal,central,central,central,central,central,central,Diffa,NER
+10313538,Moderate,Slight,central,central,central,central,central,central,Agadez,NER
+10313875,Marginal,Marginal,central,central,central,central,central,central,Dosso,NER
+10313880,Marginal,Marginal,central,central,central,central,central,central,Tillabery,NER
+10313894,Slight,Marginal,central,central,central,central,central,central,Niamey,NER
+10314266,Marginal,Marginal,central,central,central,central,central,central,Zinder,NER
+10315152,Slight,Marginal,central,central,central,central,central,central,Tahoua,NER
+10316333,Slight,Marginal,central,central,central,central,central,central,Maradi,NER
+10312855,Marginal,Moderate,central,central,central,central,central,central,Edo,NGA
+10312921,Marginal,Moderate,central,central,central,central,central,central,Kano,NGA
+10312967,Marginal,Moderate,central,central,central,central,central,central,Bayelsa,NGA
+10312979,Slight,High,central,central,central,central,central,central,Zamfara,NGA
+10313027,Marginal,Slight,central,central,central,central,central,central,Ebonyi,NGA
+10313043,Marginal,Moderate,central,central,central,central,central,central,Ogun,NGA
+10313058,Marginal,High,central,central,central,central,central,central,Abuja,NGA
+10313078,Marginal,Slight,central,central,central,central,central,central,Abia,NGA
+10313126,Marginal,Marginal,central,central,central,central,central,central,Osun,NGA
+10313334,Moderate,High,central,central,central,central,central,central,Anambra,NGA
+10313483,Slight,High,central,central,central,central,central,central,Delta,NGA
+10313522,Marginal,Slight,central,central,central,central,central,central,Oyo,NGA
+10313750,Marginal,Moderate,central,central,central,central,central,central,Plateau,NGA
+10313817,Marginal,Marginal,central,central,central,central,central,central,Akwa Ibom,NGA
+10313859,Moderate,High,central,central,central,central,central,central,Lagos,NGA
+10313923,Marginal,Moderate,central,central,central,central,central,central,Gombe,NGA
+10314245,Marginal,Slight,central,central,central,central,central,central,Kwara,NGA
+10314343,Marginal,Marginal,central,central,central,central,central,central,Ekiti,NGA
+10314496,Slight,High,central,central,central,central,central,central,Yobe,NGA
+10314662,Marginal,Moderate,central,central,central,central,central,central,Kebbi,NGA
+10314810,Marginal,Slight,central,central,central,central,central,central,Cross River,NGA
+10314878,Slight,High,central,central,central,central,central,central,Nassarawa,NGA
+10314910,Slight,High,central,central,central,central,central,central,Katsina,NGA
+10314912,Slight,High,central,central,central,central,central,central,Benue,NGA
+10315174,Marginal,Slight,central,central,central,central,central,central,Kaduna,NGA
+10315316,Marginal,Marginal,central,central,central,central,central,central,Kogi,NGA
+10315365,Marginal,Moderate,central,central,central,central,central,central,Imo,NGA
+10315512,Slight,High,central,central,central,central,central,central,Sokoto,NGA
+10315516,Slight,High,central,central,central,central,central,central,Enugu,NGA
+10315577,Marginal,Moderate,central,central,central,central,central,central,Niger,NGA
+10315631,Marginal,Slight,central,central,central,central,central,central,Bauchi,NGA
+10315654,Marginal,Moderate,central,central,central,central,central,central,Jigawa,NGA
+10315660,Slight,High,central,central,central,central,central,central,Rivers,NGA
+10315664,Marginal,Moderate,central,central,central,central,central,central,Taraba,NGA
+10315731,Marginal,Marginal,central,central,central,central,central,central,Ondo,NGA
+10315851,Marginal,High,central,central,central,central,central,central,Adamawa,NGA
+10316414,Slight,High,central,central,central,central,central,central,Borno,NGA
+10312913,High,NA,central,central,central,central,central,central,Matagalpa,NIC
+10313277,High,NA,central,central,central,central,central,central,Boaco,NIC
+10313454,High,NA,central,central,central,central,central,central,Rio San Juan,NIC
+10313722,High,NA,central,central,central,central,central,central,Chinandega,NIC
+10313849,High,NA,central,central,central,central,central,central,Masaya,NIC
+10314823,High,NA,central,central,central,central,central,central,Region Autonoma del Atlantico Norte,NIC
+10314951,High,NA,central,central,central,central,central,central,Esteli,NIC
+10315019,High,NA,central,central,central,central,central,central,Managua,NIC
+10315393,High,NA,central,central,central,central,central,central,Leon,NIC
+10315565,High,NA,central,central,central,central,central,central,Region Autonoma del Atlantico Sur,NIC
+10316432,High,NA,central,central,central,central,central,central,Jinotega,NIC
+10312964,High,NA,central,central,central,central,central,central,Western,NPL
+10313805,High,NA,central,central,central,central,central,central,Central,NPL
+10313985,High,NA,central,central,central,central,central,central,Far Western,NPL
+10314029,High,NA,central,central,central,central,central,central,Mid Western,NPL
+10315591,High,NA,central,central,central,central,central,central,Eastern,NPL
+10313084,High,NA,central,central,central,central,central,central,Gilgit Baltistan,PAK
+10313555,High,NA,central,central,central,central,central,central,Fata,PAK
+10314409,High,NA,central,central,central,central,central,central,Balochistan,PAK
+10314663,High,NA,central,central,central,central,central,central,Khyber Pakhtunkhwa,PAK
+10314997,High,NA,central,central,central,central,central,central,Sindh,PAK
+10315773,High,NA,central,central,central,central,central,central,Federal Capital Territory,PAK
+10312868,High,NA,central,central,central,central,central,central,Ucayali,PER
+10312892,High,NA,central,central,central,central,central,central,Tacna,PER
+10312901,High,NA,central,central,central,central,central,central,La Libertad,PER
+10312982,High,NA,central,central,central,central,central,central,Piura,PER
+10313594,High,NA,central,central,central,central,central,central,Apurimac,PER
+10313628,High,NA,central,central,central,central,central,central,Moquegua,PER
+10313685,High,NA,central,central,central,central,central,central,Cusco,PER
+10313701,High,NA,central,central,central,central,central,central,Ica,PER
+10313955,High,NA,central,central,central,central,central,central,Amazonas,PER
+10313956,High,NA,central,central,central,central,central,central,Puno,PER
+10313971,High,NA,central,central,central,central,central,central,Pasco,PER
+10313988,High,NA,central,central,central,central,central,central,Madre De Dios,PER
+10314034,High,NA,central,central,central,central,central,central,Huanuco,PER
+10314129,High,NA,central,central,central,central,central,central,Tumbes,PER
+10314699,High,NA,central,central,central,central,central,central,San Martin,PER
+10314965,High,NA,central,central,central,central,central,central,Cajamarca,PER
+10314982,High,NA,central,central,central,central,central,central,Loreto,PER
+10315002,High,NA,central,central,central,central,central,central,Ayacucho,PER
+10315426,High,NA,central,central,central,central,central,central,Huancavelica,PER
+10315473,High,NA,central,central,central,central,central,central,Arequipa,PER
+10315524,High,NA,central,central,central,central,central,central,Ancash,PER
+10315677,High,NA,central,central,central,central,central,central,Lima,PER
+10316059,High,NA,central,central,central,central,central,central,Lambayeque,PER
+10316120,High,NA,central,central,central,central,central,central,Junin,PER
+10316426,High,NA,central,central,central,central,central,central,Callao,PER
+10312980,High,NA,central,central,central,central,central,central,Maguindanao,PHL
+10313467,High,NA,central,central,central,central,central,central,Palawan,PHL
+10313617,High,NA,central,central,central,central,central,central,Sultan Kudarat,PHL
+10314521,High,NA,central,central,central,central,central,central,Davao del Norte,PHL
+10315555,High,NA,central,central,central,central,central,central,Davao del Sur,PHL
+604100819,High,NA,central,central,central,central,central,central,Southern,PNG
+604100820,High,NA,central,central,central,central,central,central,Highlands,PNG
+604100821,High,NA,central,central,central,central,central,central,Momase,PNG
+604100822,High,NA,central,central,central,central,central,central,Islands,PNG
+10313819,High,Marginal,central,central,central,central,central,central,Northern Province,RWA
+10314811,High,Marginal,central,central,central,central,central,central,Southern Province,RWA
+10315395,High,Marginal,central,central,central,central,central,central,Kigali City,RWA
+10316146,High,Marginal,central,central,central,central,central,central,Western Province,RWA
+10316343,High,Marginal,central,central,central,central,central,central,Eastern Province,RWA
+10312897,High,NA,central,central,central,central,central,central,Makkah,SAU
+10313356,High,NA,central,central,central,central,central,central,Ash Sharqiyah,SAU
+10313693,High,NA,central,central,central,central,central,central,Al Quassim,SAU
+10313904,High,NA,central,central,central,central,central,central,Tabuk,SAU
+10314133,High,NA,central,central,central,central,central,central,Al Madinah,SAU
+10314533,High,NA,central,central,central,central,central,central,Ha'il,SAU
+10314758,High,NA,central,central,central,central,central,central,Najran,SAU
+10315268,High,NA,central,central,central,central,central,central,Ar Riyad,SAU
+10315358,High,NA,central,central,central,central,central,central,`Asir,SAU
+10315742,High,NA,central,central,central,central,central,central,Al Bahah,SAU
+10315944,High,NA,central,central,central,central,central,central,Al Hudud ash Shamaliyah,SAU
+10316197,High,NA,central,central,central,central,central,central,Jizan,SAU
+10312861,Moderate,High,central,central,central,central,central,central,North Darfur,SDN
+10312915,High,High,central,central,central,central,central,central,Red Sea,SDN
+10313109,Moderate,High,central,central,central,central,central,central,Sennar,SDN
+10313160,High,High,central,central,central,central,central,central,River Nile,SDN
+10313631,Slight,High,central,central,central,central,central,central,South Darfur,SDN
+10313715,Slight,High,central,central,central,central,central,central,Blue Nile,SDN
+10313773,Slight,High,central,central,central,central,central,central,Central Darfur,SDN
+10314122,High,High,central,central,central,central,central,central,Northern,SDN
+10314274,Moderate,High,central,central,central,central,central,central,South Kordofan,SDN
+10314306,Moderate,High,central,central,central,central,central,central,White Nile,SDN
+10314488,Moderate,High,central,central,central,central,central,central,North Kordofan,SDN
+10314619,Moderate,High,central,central,central,central,central,central,El Gazira,SDN
+10315109,Moderate,High,central,central,central,central,central,central,West Darfur,SDN
+10315606,Moderate,High,central,central,central,central,central,central,Gedaref,SDN
+10315790,Moderate,High,central,central,central,central,central,central,West Kordofan,SDN
+10315942,High,High,central,central,central,central,central,central,Khartoum,SDN
+10316135,Moderate,High,central,central,central,central,central,central,East Darfur,SDN
+10316326,Moderate,High,central,central,central,central,central,central,Kassala,SDN
+604492671,Slight,High,central,central,central,central,central,central,Abyei PCA Area,SDN
+10312947,High,High,central,central,central,central,central,central,Louga,SEN
+10313138,High,High,central,central,central,central,central,central,Saint-Louis,SEN
+10313263,High,High,central,central,central,central,central,central,Sedhiou,SEN
+10313360,High,High,central,central,central,central,central,central,Kaolack,SEN
+10313505,High,High,central,central,central,central,central,central,Thies,SEN
+10313529,High,High,central,central,central,central,central,central,Tambacounda,SEN
+10313559,High,High,central,central,central,central,central,central,Ziguinchor,SEN
+10313606,High,High,central,central,central,central,central,central,Kaffrine,SEN
+10313645,High,High,central,central,central,central,central,central,Diourbel,SEN
+10315457,High,High,central,central,central,central,central,central,Kedougou,SEN
+10315544,High,High,central,central,central,central,central,central,Dakar,SEN
+10315633,High,High,central,central,central,central,central,central,Kolda,SEN
+10315809,High,High,central,central,central,central,central,central,Matam,SEN
+10315906,High,High,central,central,central,central,central,central,Fatick,SEN
+10312951,High,NA,central,central,central,central,central,central,Malaita,SLB
+10313765,High,NA,central,central,central,central,central,central,Makira Ulawa,SLB
+10314090,High,NA,central,central,central,central,central,central,Central,SLB
+10314700,High,NA,central,central,central,central,central,central,Western,SLB
+10315156,High,NA,central,central,central,central,central,central,Guadalcanal,SLB
+10315530,High,NA,central,central,central,central,central,central,Honiara,SLB
+10316151,High,NA,central,central,central,central,central,central,Choiseul,SLB
+10316262,High,NA,central,central,central,central,central,central,Isabel,SLB
+10316443,High,NA,central,central,central,central,central,central,Temotu,SLB
+10314190,Marginal,Marginal,central,central,central,central,central,central,Southern,SLE
+10314221,Marginal,Marginal,central,central,central,central,central,central,Northern,SLE
+10315728,Moderate,High,central,central,central,central,central,central,Western Area,SLE
+10316194,Marginal,Marginal,central,central,central,central,central,central,Eastern,SLE
+10313129,Moderate,Moderate,central,central,central,central,central,central,Bakool,SOM
+10313250,Moderate,Marginal,central,central,central,central,central,central,Shabelle Hoose,SOM
+10313264,Moderate,Moderate,central,central,central,central,central,central,Gedo,SOM
+10313471,High,Slight,central,central,central,central,central,central,Sanaag,SOM
+10313506,High,Moderate,central,central,central,central,central,central,Woqooyi Galbeed,SOM
+10313687,High,Moderate,central,central,central,central,central,central,Mudug,SOM
+10313728,Moderate,Marginal,central,central,central,central,central,central,Juba Dhexe,SOM
+10313752,Moderate,Slight,central,central,central,central,central,central,Juba Hoose,SOM
+10313769,Moderate,Marginal,central,central,central,central,central,central,Bay,SOM
+10314367,Moderate,Marginal,central,central,central,central,central,central,Shabelle Dhexe,SOM
+10314518,Moderate,Marginal,central,central,central,central,central,central,Banadir,SOM
+10314826,High,Marginal,central,central,central,central,central,central,Bari,SOM
+10315054,High,Moderate,central,central,central,central,central,central,Sool,SOM
+10315513,Moderate,Moderate,central,central,central,central,central,central,Hiraan,SOM
+10315559,High,Moderate,central,central,central,central,central,central,Nugaal,SOM
+10315933,High,Moderate,central,central,central,central,central,central,Galgaduud,SOM
+10316292,High,High,central,central,central,central,central,central,Awdal,SOM
+10316359,High,Moderate,central,central,central,central,central,central,Togdheer,SOM
+10313478,Marginal,High,central,central,central,central,central,central,Western Bahr El Ghazal,SSD
+10313519,Moderate,High,central,central,central,central,central,central,Unity,SSD
+10313613,Marginal,High,central,central,central,central,central,central,Central Equatoria,SSD
+10313964,Slight,High,central,central,central,central,central,central,El Buheyrat,SSD
+10314466,Marginal,High,central,central,central,central,central,central,Eastern Equatoria,SSD
+10315322,Moderate,High,central,central,central,central,central,central,Upper Nile,SSD
+10315607,Marginal,High,central,central,central,central,central,central,Western Equatoria,SSD
+10315940,Moderate,High,central,central,central,central,central,central,Jonglei,SSD
+10316161,Moderate,High,central,central,central,central,central,central,Northern Bahr El Ghazal,SSD
+10316236,Moderate,High,central,central,central,central,central,central,Warab,SSD
+10313980,High,Marginal,central,central,central,central,central,central,Sao Tome,STP
+10315290,High,Marginal,central,central,central,central,central,central,Principe,STP
+10313025,High,Marginal,central,central,central,central,central,central,Shiselweni,SWZ
+10313344,High,Marginal,central,central,central,central,central,central,Hhohho,SWZ
+10314882,High,Marginal,central,central,central,central,central,central,Lubombo,SWZ
+10313256,Slight,Marginal,central,central,central,central,central,central,Logone Oriental,TCD
+10313284,High,Marginal,central,central,central,central,central,central,Wadi Fira,TCD
+10313395,Slight,Marginal,central,central,central,central,central,central,Mayo-Kebbi Ouest,TCD
+10313659,Moderate,Marginal,central,central,central,central,central,central,Ouaddai,TCD
+10313679,Moderate,Marginal,central,central,central,central,central,central,Ville de N'Djamena,TCD
+10313938,Moderate,Marginal,central,central,central,central,central,central,Sila,TCD
+10313990,Moderate,Marginal,central,central,central,central,central,central,Batha,TCD
+10313992,Moderate,Marginal,central,central,central,central,central,central,Lac,TCD
+10314005,Moderate,Marginal,central,central,central,central,central,central,Barh el Ghazel,TCD
+10314168,Moderate,Marginal,central,central,central,central,central,central,Chari-Baguirmi,TCD
+10314630,High,Marginal,central,central,central,central,central,central,Borkou,TCD
+10314664,High,Marginal,central,central,central,central,central,central,Tibesti,TCD
+10314751,Moderate,Marginal,central,central,central,central,central,central,Guera,TCD
+10314863,Moderate,Marginal,central,central,central,central,central,central,Hadjer-Lamis,TCD
+10314996,Moderate,Marginal,central,central,central,central,central,central,Tandjile,TCD
+10315083,Moderate,Marginal,central,central,central,central,central,central,Kanem,TCD
+10315371,Moderate,Marginal,central,central,central,central,central,central,Mayo-Kebbi Est,TCD
+10315539,High,Marginal,central,central,central,central,central,central,Ennedi Est,TCD
+10315696,Moderate,Marginal,central,central,central,central,central,central,Logone Occidental,TCD
+10316032,Moderate,Marginal,central,central,central,central,central,central,Mandoul,TCD
+10316049,High,Marginal,central,central,central,central,central,central,Ennedi Ouest,TCD
+10316362,Slight,Marginal,central,central,central,central,central,central,Moyen-Chari,TCD
+10316411,Slight,Marginal,central,central,central,central,central,central,Salamat,TCD
+10313237,Moderate,Marginal,central,central,central,central,central,central,Maritime,TGO
+10314344,Moderate,Slight,central,central,central,central,central,central,Savanes,TGO
+10314427,Slight,Marginal,central,central,central,central,central,central,Kara,TGO
+10314456,Slight,Marginal,central,central,central,central,central,central,Centrale,TGO
+10315550,Marginal,Marginal,central,central,central,central,central,central,Plateaux,TGO
+10312965,High,Marginal,central,central,central,central,central,central,Kaskazini Unguja,TZA
+10313017,High,Marginal,central,central,central,central,central,central,Morogoro,TZA
+10313018,High,Marginal,central,central,central,central,central,central,Ruvuma,TZA
+10313035,High,Marginal,central,central,central,central,central,central,Pwani,TZA
+10313079,High,Marginal,central,central,central,central,central,central,Lindi,TZA
+10313259,High,Marginal,central,central,central,central,central,central,Mwanza,TZA
+10313296,High,Marginal,central,central,central,central,central,central,Kigoma,TZA
+10313461,High,Marginal,central,central,central,central,central,central,Kagera,TZA
+10313466,High,Marginal,central,central,central,central,central,central,Rukwa,TZA
+10313644,High,Marginal,central,central,central,central,central,central,Kilimanjaro,TZA
+10313694,High,Marginal,central,central,central,central,central,central,Mjini Magharibi,TZA
+10313746,High,Marginal,central,central,central,central,central,central,Njombe,TZA
+10313760,High,Marginal,central,central,central,central,central,central,Manyara,TZA
+10314026,High,Marginal,central,central,central,central,central,central,Mbeya,TZA
+10314271,High,Marginal,central,central,central,central,central,central,Kaskazini Pemba,TZA
+10314538,High,Marginal,central,central,central,central,central,central,Dar-es-salaam,TZA
+10314546,High,Marginal,central,central,central,central,central,central,Simiyu,TZA
+10314605,High,Marginal,central,central,central,central,central,central,Tanga,TZA
+10314671,High,Marginal,central,central,central,central,central,central,Shinyanga,TZA
+10314691,High,Marginal,central,central,central,central,central,central,Tabora,TZA
+10314717,High,Marginal,central,central,central,central,central,central,Singida,TZA
+10314762,High,Marginal,central,central,central,central,central,central,Kusini Unguja,TZA
+10314956,High,Marginal,central,central,central,central,central,central,Mara,TZA
+10315526,High,Marginal,central,central,central,central,central,central,Dodoma,TZA
+10315935,High,Marginal,central,central,central,central,central,central,Kusini Pemba,TZA
+10315939,High,Marginal,central,central,central,central,central,central,Katavi,TZA
+10316111,High,Marginal,central,central,central,central,central,central,Geita,TZA
+10316139,High,Marginal,central,central,central,central,central,central,Iringa,TZA
+10316307,High,Marginal,central,central,central,central,central,central,Arusha,TZA
+10316433,High,Marginal,central,central,central,central,central,central,Mtwara,TZA
+10313067,Moderate,NA,central,central,central,central,central,central,Sucre,VEN
+10313302,Moderate,NA,central,central,central,central,central,central,Vargas,VEN
+10313363,Moderate,NA,central,central,central,central,central,central,Zulia,VEN
+10313658,Moderate,NA,central,central,central,central,central,central,Guarico,VEN
+10313692,Moderate,NA,central,central,central,central,central,central,Trujillo,VEN
+10313957,Moderate,NA,central,central,central,central,central,central,Portuguesa,VEN
+10314678,Moderate,NA,central,central,central,central,central,central,Monagas,VEN
+10314901,Slight,NA,central,central,central,central,central,central,Delta Amacuro,VEN
+10315022,Moderate,NA,central,central,central,central,central,central,Barinas,VEN
+10315085,Moderate,NA,central,central,central,central,central,central,Tachira,VEN
+10315137,Moderate,NA,central,central,central,central,central,central,Amazonas,VEN
+10315178,Moderate,NA,central,central,central,central,central,central,Anzoategui,VEN
+10315261,Moderate,NA,central,central,central,central,central,central,Miranda,VEN
+10315380,Moderate,NA,central,central,central,central,central,central,Distrito Federal,VEN
+10315758,Moderate,NA,central,central,central,central,central,central,Apure,VEN
+10316061,Moderate,NA,central,central,central,central,central,central,Aragua,VEN
+10316083,Moderate,NA,central,central,central,central,central,central,Bolivar,VEN
+10312864,High,NA,central,central,central,central,central,central,An Giang,VNM
+10312882,High,NA,central,central,central,central,central,central,Vinh Long,VNM
+10312981,High,NA,central,central,central,central,central,central,Binh Phuoc,VNM
+10312994,High,NA,central,central,central,central,central,central,Dong Thap,VNM
+10313073,High,NA,central,central,central,central,central,central,Ninh Binh,VNM
+10313093,High,NA,central,central,central,central,central,central,Dong Nai,VNM
+10313572,High,NA,central,central,central,central,central,central,Phu Yen,VNM
+10313785,High,NA,central,central,central,central,central,central,Kien Giang,VNM
+10314054,High,NA,central,central,central,central,central,central,Thua Thien H,VNM
+10314123,High,NA,central,central,central,central,central,central,Ben Tre,VNM
+10314204,High,NA,central,central,central,central,central,central,Khanh Hoa,VNM
+10314205,High,NA,central,central,central,central,central,central,Binh Dinh,VNM
+10314270,High,NA,central,central,central,central,central,central,Ca Mau,VNM
+10314484,High,NA,central,central,central,central,central,central,Binh Duong,VNM
+10314645,High,NA,central,central,central,central,central,central,Lam Dong,VNM
+10314805,High,NA,central,central,central,central,central,central,Ba Ria-Vung,VNM
+10314915,High,NA,central,central,central,central,central,central,Tien Giang,VNM
+10315132,High,NA,central,central,central,central,central,central,Tra Vinh,VNM
+10315160,High,NA,central,central,central,central,central,central,Vinh Phuc,VNM
+10315210,High,NA,central,central,central,central,central,central,Tuyen Quang,VNM
+10315262,High,NA,central,central,central,central,central,central,Phu Tho,VNM
+10315356,High,NA,central,central,central,central,central,central,Tay Ninh,VNM
+10315468,High,NA,central,central,central,central,central,central,Soc Trang,VNM
+10315481,High,NA,central,central,central,central,central,central,Ninh Thuan,VNM
+10315850,High,NA,central,central,central,central,central,central,Nam Dinh,VNM
+10316054,High,NA,central,central,central,central,central,central,Dak Lak,VNM
+10316300,High,NA,central,central,central,central,central,central,Long An,VNM
+10316328,High,NA,central,central,central,central,central,central,TP. Ho Chi M,VNM
+10316329,High,NA,central,central,central,central,central,central,TP. Ha Noi,VNM
+10313092,High,NA,central,central,central,central,central,central,Shefa,VUT
+10314591,High,NA,central,central,central,central,central,central,Tafea,VUT
+10315662,High,NA,central,central,central,central,central,central,Penama,VUT
+10316019,High,NA,central,central,central,central,central,central,Malampa,VUT
+10316122,High,NA,central,central,central,central,central,central,Sanma,VUT
+10312891,High,NA,central,central,central,central,central,central,Hadramaut,YEM
+10313123,High,NA,central,central,central,central,central,central,Sa'ada,YEM
+10313562,High,NA,central,central,central,central,central,central,Al Bayda,YEM
+10313607,High,NA,central,central,central,central,central,central,Lahj,YEM
+10313744,High,NA,central,central,central,central,central,central,Amanat Al Asimah,YEM
+10314236,High,NA,central,central,central,central,central,central,Al Dhale'e,YEM
+10314289,High,NA,central,central,central,central,central,central,Al Maharah,YEM
+10314776,Moderate,NA,central,central,central,central,central,central,Al Mahwit,YEM
+10314874,High,NA,central,central,central,central,central,central,Al Hudaydah,YEM
+10314918,High,NA,central,central,central,central,central,central,Marib,YEM
+10314972,High,NA,central,central,central,central,central,central,Abyan,YEM
+10315269,High,NA,central,central,central,central,central,central,Amran,YEM
+10315310,High,NA,central,central,central,central,central,central,Ibb,YEM
+10315703,High,NA,central,central,central,central,central,central,Dhamar,YEM
+10315838,High,NA,central,central,central,central,central,central,Aden,YEM
+10315924,Moderate,NA,central,central,central,central,central,central,Raymah,YEM
+10316040,High,NA,central,central,central,central,central,central,Taizz,YEM
+10316121,High,NA,central,central,central,central,central,central,Sana'a,YEM
+10316244,Slight,NA,central,central,central,central,central,central,Hajjah,YEM
+10313378,High,Marginal,central,central,central,central,central,central,Gauteng,ZAF
+10313486,High,Marginal,central,central,central,central,central,central,Mpumalanga,ZAF
+10314893,High,Marginal,central,central,central,central,central,central,KwaZulu-Natal,ZAF
+10315266,High,Slight,central,central,central,central,central,central,Limpopo,ZAF
+10315889,High,Marginal,central,central,central,central,central,central,North West,ZAF
+10313039,High,High,central,central,central,central,central,central,Lusaka,ZMB
+10313415,Moderate,High,central,central,central,central,central,central,Copperbelt,ZMB
+10313551,Slight,Slight,central,central,central,central,central,central,Luapula,ZMB
+10314120,Moderate,Moderate,central,central,central,central,central,central,Northern,ZMB
+10314868,High,High,central,central,central,central,central,central,Central,ZMB
+10314963,High,High,central,central,central,central,central,central,Eastern,ZMB
+10315666,High,High,central,central,central,central,central,central,Southern,ZMB
+10315723,High,High,central,central,central,central,central,central,Muchinga,ZMB
+10316165,Moderate,Moderate,central,central,central,central,central,central,Western,ZMB
+10316195,Slight,Slight,central,central,central,central,central,central,North-Western,ZMB
+10314196,High,Slight,central,central,central,central,central,central,Midlands,ZWE
+10314247,High,Moderate,central,central,central,central,central,central,Mashonaland Central,ZWE
+10314375,High,Marginal,central,central,central,central,central,central,Manicaland,ZWE
+10314646,High,Slight,central,central,central,central,central,central,Bulawayo,ZWE
+10314690,High,Moderate,central,central,central,central,central,central,Matabeleland North,ZWE
+10314859,High,Marginal,central,central,central,central,central,central,Masvingo,ZWE
+10315084,High,Slight,central,central,central,central,central,central,Harare,ZWE
+10315089,High,Slight,central,central,central,central,central,central,Matabeleland South,ZWE
+10315833,High,Slight,central,central,central,central,central,central,Mashonaland East,ZWE
+10316069,High,Moderate,central,central,central,central,central,central,Mashonaland West,ZWE
+10315113,Moderate,High,central,central,central,central,central,central,Ashanti,GHA
+10313233,Slight,High,central,central,central,central,central,central,Brong Ahafo,GHA
+10315532,Slight,High,central,central,central,central,central,central,Central,GHA
+10314341,Marginal,High,central,central,central,central,central,central,Eastern,GHA
+10315061,High,High,central,central,central,central,central,central,Greater Accra,GHA
+10314472,Slight,High,central,central,central,central,central,central,Northern,GHA
+10316047,High,High,central,central,central,central,central,central,Upper East,GHA
+10314282,Moderate,High,central,central,central,central,central,central,Upper West,GHA
+10314522,Slight,High,central,central,central,central,central,central,Volta,GHA
+10315836,Marginal,Moderate,central,central,central,central,central,central,Western,GHA
+10823028,Marginal,Marginal,central,central,central,central,central,central,Abim,UGA
+10314507,Moderate,Moderate,central,central,central,central,central,central,Adjumani,UGA
+10823029,Marginal,Marginal,central,central,central,central,central,central,Agago,UGA
+10823030,Marginal,Marginal,central,central,central,central,central,central,Alebtong,UGA
+10823032,Marginal,Marginal,central,central,central,central,central,central,Amolatar,UGA
+10823033,Marginal,Marginal,central,central,central,central,central,central,Amudat,UGA
+10823034,Marginal,Marginal,central,central,central,central,central,central,Amuria,UGA
+10823035,Marginal,Marginal,central,central,central,central,central,central,Amuru,UGA
+10313076,Marginal,Marginal,central,central,central,central,central,central,Apac,UGA
+10315464,Moderate,Moderate,central,central,central,central,central,central,Arua,UGA
+10823036,Slight,Marginal,central,central,central,central,central,central,Budaka,UGA
+10823037,Moderate,Moderate,central,central,central,central,central,central,Bududa,UGA
+10316295,Marginal,Marginal,central,central,central,central,central,central,Bugiri,UGA
+10823038,High,High,central,central,central,central,central,central,Buhweju,UGA
+10823039,Moderate,Moderate,central,central,central,central,central,central,Buikwe,UGA
+10823040,Marginal,Marginal,central,central,central,central,central,central,Bukedea,UGA
+10823041,High,Moderate,central,central,central,central,central,central,Bukomansimbi,UGA
+10823042,High,High,central,central,central,central,central,central,Bukwo,UGA
+10823043,Moderate,Moderate,central,central,central,central,central,central,Bulambuli,UGA
+10823044,Slight,Slight,central,central,central,central,central,central,Buliisa,UGA
+10314999,High,Moderate,central,central,central,central,central,central,Bundibugyo,UGA
+10314457,High,High,central,central,central,central,central,central,Bushenyi,UGA
+10313723,Marginal,Marginal,central,central,central,central,central,central,Busia,UGA
+10823045,Marginal,Marginal,central,central,central,central,central,central,Butaleja,UGA
+10823046,High,High,central,central,central,central,central,central,Butambala,UGA
+10823047,Marginal,Marginal,central,central,central,central,central,central,Buvuma,UGA
+10823048,Marginal,Marginal,central,central,central,central,central,central,Buyende,UGA
+10823049,Marginal,Marginal,central,central,central,central,central,central,Dokolo,UGA
+10823050,High,High,central,central,central,central,central,central,Gomba,UGA
+10314652,Marginal,Marginal,central,central,central,central,central,central,Gulu,UGA
+10313414,Moderate,Moderate,central,central,central,central,central,central,Hoima,UGA
+10823051,High,High,central,central,central,central,central,central,Ibanda,UGA
+10314207,Marginal,Marginal,central,central,central,central,central,central,Iganga,UGA
+10823052,High,High,central,central,central,central,central,central,Isingiro,UGA
+10313260,Slight,Slight,central,central,central,central,central,central,Jinja,UGA
+10823053,Marginal,Marginal,central,central,central,central,central,central,Kaabong,UGA
+10313509,High,High,central,central,central,central,central,central,Kabale,UGA
+10314754,High,High,central,central,central,central,central,central,Kabarole,UGA
+10315699,Marginal,Marginal,central,central,central,central,central,central,Kaberamaido,UGA
+604492677,Moderate,Moderate,central,central,central,central,central,central,Kagadi,UGA
+604492675,Moderate,Moderate,central,central,central,central,central,central,Kakumiro,UGA
+10315657,High,High,central,central,central,central,central,central,Kalangala,UGA
+10823054,Marginal,Marginal,central,central,central,central,central,central,Kaliro,UGA
+10823055,High,High,central,central,central,central,central,central,Kalungu,UGA
+10315134,High,High,central,central,central,central,central,central,Kampala,UGA
+10314003,Marginal,Marginal,central,central,central,central,central,central,Kamuli,UGA
+10315676,High,Moderate,central,central,central,central,central,central,Kamwenge,UGA
+10313255,High,High,central,central,central,central,central,central,Kanungu,UGA
+10314674,Moderate,Moderate,central,central,central,central,central,central,Kapchorwa,UGA
+10313327,High,High,central,central,central,central,central,central,Kasese,UGA
+10315905,Marginal,Marginal,central,central,central,central,central,central,Katakwi,UGA
+10313528,Slight,Marginal,central,central,central,central,central,central,Kayunga,UGA
+10313802,Moderate,Moderate,central,central,central,central,central,central,Kibaale,UGA
+10313662,High,High,central,central,central,central,central,central,Kiboga,UGA
+10823056,Marginal,Marginal,central,central,central,central,central,central,Kibuku,UGA
+10823058,Marginal,Marginal,central,central,central,central,central,central,Kiryandongo,UGA
+10315461,High,High,central,central,central,central,central,central,Kisoro,UGA
+10316258,Marginal,Marginal,central,central,central,central,central,central,Kitgum,UGA
+10823059,High,High,central,central,central,central,central,central,Koboko,UGA
+10823060,Marginal,Marginal,central,central,central,central,central,central,Kole,UGA
+10313453,Marginal,Marginal,central,central,central,central,central,central,Kotido,UGA
+10313202,Marginal,Marginal,central,central,central,central,central,central,Kumi,UGA
+10823061,High,High,central,central,central,central,central,central,Kween,UGA
+10823062,Moderate,Moderate,central,central,central,central,central,central,Kyankwanzi,UGA
+10823063,Moderate,Moderate,central,central,central,central,central,central,Kyegegwa,UGA
+10314676,Moderate,Moderate,central,central,central,central,central,central,Kyenjojo,UGA
+604100834,Slight,Slight,central,central,central,central,central,central,Lake Victoria,UGA
+10823064,Marginal,Marginal,central,central,central,central,central,central,Lamwo,UGA
+10316350,Marginal,Marginal,central,central,central,central,central,central,Lira,UGA
+10823065,Marginal,Marginal,central,central,central,central,central,central,Luuka,UGA
+10316336,Moderate,Moderate,central,central,central,central,central,central,Luwero,UGA
+10823066,High,Moderate,central,central,central,central,central,central,Lwengo,UGA
+10823067,Moderate,Moderate,central,central,central,central,central,central,Lyantonde,UGA
+10823068,Moderate,Moderate,central,central,central,central,central,central,Manafwa,UGA
+10823069,High,Moderate,central,central,central,central,central,central,Maracha,UGA
+10314767,High,High,central,central,central,central,central,central,Masaka,UGA
+10315830,Moderate,Moderate,central,central,central,central,central,central,Masindi,UGA
+10315476,Marginal,Marginal,central,central,central,central,central,central,Mayuge,UGA
+10316334,Moderate,Slight,central,central,central,central,central,central,Mbale,UGA
+10313003,High,High,central,central,central,central,central,central,Mbarara,UGA
+10823070,High,Moderate,central,central,central,central,central,central,Mitooma,UGA
+10823071,High,High,central,central,central,central,central,central,Mityana,UGA
+10315326,Marginal,Marginal,central,central,central,central,central,central,Moroto,UGA
+10314946,High,Moderate,central,central,central,central,central,central,Moyo,UGA
+10314319,High,High,central,central,central,central,central,central,Mpigi,UGA
+10316089,High,Moderate,central,central,central,central,central,central,Mubende,UGA
+10313332,Moderate,Moderate,central,central,central,central,central,central,Mukono,UGA
+10314734,Marginal,Marginal,central,central,central,central,central,central,Nakapiripirit,UGA
+10823072,Moderate,Moderate,central,central,central,central,central,central,Nakaseke,UGA
+10315285,Slight,Slight,central,central,central,central,central,central,Nakasongola,UGA
+10823073,Marginal,Marginal,central,central,central,central,central,central,Namayingo,UGA
+10823074,Marginal,Marginal,central,central,central,central,central,central,Namutumba,UGA
+10823075,Marginal,Marginal,central,central,central,central,central,central,Napak,UGA
+10314702,Marginal,Marginal,central,central,central,central,central,central,Nebbi,UGA
+10823076,Marginal,Marginal,central,central,central,central,central,central,Ngora,UGA
+10823077,High,High,central,central,central,central,central,central,Ntoroko,UGA
+10315890,High,High,central,central,central,central,central,central,Ntungamo,UGA
+10823078,Marginal,Marginal,central,central,central,central,central,central,Nwoya,UGA
+604492676,Marginal,Marginal,central,central,central,central,central,central,Omoro,UGA
+10823079,Marginal,Marginal,central,central,central,central,central,central,Otuke,UGA
+10823080,Marginal,Marginal,central,central,central,central,central,central,Oyam,UGA
+10315488,Marginal,Marginal,central,central,central,central,central,central,Pader,UGA
+10314071,Slight,Slight,central,central,central,central,central,central,Pallisa,UGA
+10316322,High,High,central,central,central,central,central,central,Rakai,UGA
+604100796,High,High,central,central,central,central,central,central,Rubanda,UGA
+10823081,High,High,central,central,central,central,central,central,Rubirizi,UGA
+10313550,High,High,central,central,central,central,central,central,Rukungiri,UGA
+10823082,Slight,Slight,central,central,central,central,central,central,Serere,UGA
+10823083,High,High,central,central,central,central,central,central,Sheema,UGA
+10315431,Moderate,Moderate,central,central,central,central,central,central,Sironko,UGA
+10313071,Marginal,Marginal,central,central,central,central,central,central,Soroti,UGA
+10315170,Moderate,Moderate,central,central,central,central,central,central,Ssembabule,UGA
+10313603,Marginal,Marginal,central,central,central,central,central,central,Tororo,UGA
+10313044,High,High,central,central,central,central,central,central,Wakiso,UGA
+10315234,High,Moderate,central,central,central,central,central,central,Yumbe,UGA
+10823084,Marginal,Marginal,central,central,central,central,central,central,Zombo,UGA
